@@ -19,6 +19,3 @@ pytz>=2010h
 # Horizon Utility Requirements
 # for SECURE_KEY generation
 lockfile>=0.8
-
-python-ironicclient
-http://tarballs.openstack.org/python-tuskarclient/python-tuskarclient-master.tar.gz#egg=python-tuskarclient
