@@ -8,8 +8,11 @@
 
 
 {% block js %}
-  {% include "overrides/infrastructure/templates/_scripts.html" %}
+<script src='{{ STATIC_URL }}infrastructure/js/angular/horizon.base64.js' type='text/javascript' charset='utf-8'></script>
+<script src='{{ STATIC_URL }}infrastructure/js/angular/horizon.node_errata.js' type='text/javascript' charset='utf-8'></script>
+{% include "client_side/templates.html" %}
 {% endblock %}
+
 
 
 {% block main %}
