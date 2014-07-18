@@ -6,28 +6,16 @@
   {% include 'horizon/common/_page_header.html' with title=_('Node Details') %}
 {% endblock page_header %}
 
-
 {% block js %}
 {{ block.super }}
 <script src='{{ STATIC_URL }}infrastructure/js/angular/horizon.base64.js' type='text/javascript' charset='utf-8'></script>
 <script src='{{ STATIC_URL }}infrastructure/js/angular/horizon.node_errata.js' type='text/javascript' charset='utf-8'></script>
 {% endblock %}
 
-
-
 {% block main %}
 <div class="row-fluid">
   <div class="span12">
-    <h4>{% trans "Info" %}</h4>
     <dl class="clearfix">
-      <dt>{% trans "MAC Addresses" %}</dt>
-      <dd>{{ node.addresses|join:", "|default:"&mdash;" }}</dd>
-      <dt>{% trans "UUID" %}</dt>
-      <dd>{{ node.uuid|default:"&mdash;" }}</dd>
-      <dt>{% trans "Instance UUID" %}</dt>
-      <dd>{{ node.instance_uuid|default:"&mdash;" }}</dd>
-      <dt>{% trans "Driver" %}</dt>
-      <dd>{{ node.driver|default:"&mdash;" }}</dd>
       <dt>{% trans "Power state" %}</dt>
       <dd>{{ node.power_state|default:"&mdash;" }}</dd>
     </dl>
@@ -35,26 +23,53 @@
 </div>
 <div class="row-fluid">
   <div class="span6">
-    <h4>{% trans "Driver Info" %}</h4>
+    <h4>{% trans "Inventory" %}</h4>
     <dl class="clearfix">
-      <dt>{% trans "IPMI address" %}</dt>
-      <dd>{{ node.driver_info.ipmi_address|default:"&mdash;" }}</dd>
-      <dt>{% trans "IPMI username" %}</dt>
-      <dd>{{ node.driver_info.ipmi_username|default:"&mdash;" }}</dd>
+      <dt>{% trans "Node UUID" %}</dt>
+      <dd>{{ node.uuid|default:"&mdash;" }}</dd>
+      <dt>{% trans "Driver" %}</dt>
+      <dd>
+	{{ node.driver|default:"&mdash;" }}<br />
+	<b>IP Address:</b> {{ node.driver_info.ipmi_address|default:"&mdash;" }}<br />
+	<b>IPMI User:</b> {{ node.driver_info.ipmi_username|default:"&mdash;" }}
+      </dd>
+      <dt>{% trans "Network Cards" %}</dt>
+      <dd>
+	{{ node.addresses|length }}<br />
+	{% for address in node.addresses %}
+	  {{ address }}<br />
+	{% endfor %}
+      </dd>
+      <dt>{% trans "Registered HW" %}</dt>
+      <dd>
+        {{ node.cpus|default:"&mdash;" }} {% trans "CPU" %}<br />
+        {{ node.memory_mb|default:"&mdash;" }} {% trans "RAM (MB)" %}<br />
+        {{ node.local_gb|default:"&mdash;" }} {% trans "HDD (GB)" %}
+      </dd>
     </dl>
   </div>
   <div class="span6">
-    <h4>{% trans "Properties" %}</h4>
+    <h4>{% trans "Deployment" %}</h4>
     <dl class="clearfix">
-      <dt>{% trans "Local disk" %}</dt>
-      <dd>{{ node.properties.local_disk|filesizeformat|default:"&mdash;" }}</dd>
-      <dt>{% trans "RAM" %}</dt>
-      <dd>{{ node.properties.ram|filesizeformat|default:"&mdash;" }}</dd>
-      <dt>{% trans "CPU" %}</dt>
-      <dd>{{ node.properties.cpu|default:"&mdash;" }}</dd>
+      <dt>{% trans "Deployment Role" %}</dt>
+      {% if stack and role %}
+        <dd><a href="{% url 'horizon:infrastructure:overcloud:role' stack.id role.id %}">{{ role.name }}</a></dd>
+      {% else %}
+        <dd>&mdash;</dd>
+      {% endif %}
+      <dt>{% trans "Provisioning" %}</dt>
+      <dd>
+	{{ node.provisioning_status|default:"&mdash;" }}
+	{% if node.instance_uuid %}
+	  <br />{{ node.instance.created }}
+	{% endif %}
+      </dd>
+      <dt>{% trans "Image" %}</dt>
+      <dd>{{ node.image_name|default:"&mdash;" }}</dd>
+      <dt>{% trans "Instance UUID" %}</dt>
+      <dd>{{ node.instance_uuid|default:"&mdash;" }}</dd>
     </dl>
   </div>
-
 </div>
 
 {% if node.uuid %}
@@ -66,12 +81,11 @@
 </div>
 {% endif %}
 
-
 <h2>{% trans "Performance and Capacity" %}</h2>
 
-{% if meters %}
+{% if meter_conf %}
 <br />
-{% url 'horizon:infrastructure:nodes:performance' node.id as node_perf_url %}
+{% url 'horizon:infrastructure:nodes:performance' node.uuid as node_perf_url %}
 
 <div id="ceilometer-stats">
   <form class="form-horizontal" id="linechart_general_form">
@@ -145,14 +159,14 @@
 <div class="clear"></div>
 <div>
   <table>
-    {% for meter_name, meter_label in meters %}
-      {% if forloop.counter0|divisibleby:"4" %}
+    {% for meter_label, url_part in meter_conf %}
+      {% if forloop.counter == 1 or forloop.counter == 4  %}
         <tr>
       {% endif %}
       <td>
-        {% include "infrastructure/_performance_chart.html" with label=meter_label url=node_perf_url|add:"?meter="|add:meter_name only %}
+        {% include "infrastructure/_performance_chart.html" with label=meter_label url=node_perf_url|add:"?"|add:url_part only %}
       </td>
-      {% if forloop.counter|divisibleby:"4" %}
+        {% if forloop.counter == 3 or forloop.counter == 5  %}
         </tr>
       {% endif %}
     {% endfor %}
@@ -162,4 +176,3 @@
   Metering service is not enabled.
 {% endif %}
 {% endblock %}
-
