@@ -1,0 +1,4 @@
+PANEL = 'overview'
+PANEL_DASHBOARD = 'infrastructure'
+PANEL_GROUP = 'infrastructure'
+ADD_PANEL = 'tuskar_boxes.overview.panel.Overview'

@@ -6,9 +6,7 @@ Contents:
 .. toctree::
    :maxdepth: 2
 
-   README
    install
-   HACKING
 
 Indices and tables
 ==================
