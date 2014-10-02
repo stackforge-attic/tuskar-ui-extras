@@ -15,12 +15,14 @@
 from django.conf import urls
 
 from tuskar_ui.infrastructure.overview import views
-import tuskar_boxes.views
+import tuskar_boxes.overview.views as boxes_views
 
 
 urlpatterns = urls.patterns(
     '',
-    urls.url(r'^$', tuskar_boxes.views.IndexView.as_view(), name='index'),
+    urls.url(r'^$',
+             boxes_views.IndexView.as_view(),
+             name='index'),
     urls.url(r'^deploy-confirmation$',
              views.DeployConfirmationView.as_view(),
              name='deploy_confirmation'),

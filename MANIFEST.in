@@ -7,7 +7,7 @@ include AUTHORS
 include LICENSE
 include Makefile
 include manage.py
-include README.md
+include README.rst
 include run_tests.sh
 include tox.ini
 include doc/Makefile
