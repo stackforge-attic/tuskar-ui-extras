@@ -14,6 +14,7 @@
 
 from tuskar_ui import api
 from tuskar_ui.infrastructure.overview import views
+from tuskar_boxes.overview import forms
 
 
 def flavor_nodes(request, flavor):
@@ -27,25 +28,38 @@ def flavor_nodes(request, flavor):
         ]):
             yield node
 
+
 class IndexView(views.IndexView):
     template_name = "tuskar_boxes/overview/index.html"
+    form_class = forms.EditPlan
 
     def get_context_data(self, *args, **kwargs):
         context = super(IndexView, self).get_context_data(*args, **kwargs)
         flavors = api.flavor.Flavor.list(self.request)
         flavors.sort(key=lambda np: (np.vcpus, np.ram, np.disk))
+        for role in context['roles']:
+            flavor =  role['role'].flavor(context['plan'])
+            role['flavor_name'] = flavor.name if flavor else ''
         context['flavors'] = []
         for flavor in flavors:
             nodes = [{
                 'role': '',
             } for node in flavor_nodes(self.request, flavor)]
+            roles = [role for role in context['roles']
+                     if role['flavor_name'] == flavor.name]
             flavor = {
                 'name': flavor.name,
                 'vcpus': flavor.vcpus,
                 'ram': flavor.ram,
                 'disk': flavor.disk,
                 'nodes': nodes,
+                'roles': roles,
             }
-            if nodes:  # Don't list empty flavors
+            if nodes or roles:  # Don't list empty flavors
                 context['flavors'].append(flavor)
+            context['free_roles'] = [role for role in context['roles']
+                                     if not role['flavor_name']]
+        if not context['stack']:
+            for role in context['roles']:
+                role['flavor_field'] = context['form'][role['id'] + '-flavor']
         return context
