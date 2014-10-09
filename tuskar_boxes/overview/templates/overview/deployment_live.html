@@ -1,0 +1,33 @@
+{% extends "infrastructure/overview/deployment_base.html" %}
+
+{% load i18n %}
+{% load url from future%}
+
+{% block deployment-icon %}
+  <i class="fa fa-check-circle-o text-success"></i>
+{% endblock %}
+{% block deployment-title %}{% trans "Deployment is live" %}{% endblock %}
+{% block deployment-info %}
+<strong>{% trans "Access information" %}</strong>
+<dl>
+  {% for dashboard_url in dashboard_urls %}
+  <dt>{% trans "Horizon URL" %}</dt>
+  <dd><a href="{{ dashboard_url }}">{{ dashboard_url }}</a></dd>
+  {% endfor %}
+  <dt>{% trans "User name" %}</dt>
+  <dd>admin</dd>
+  <dt></dt>
+  <dd>
+    <form>
+        <fieldset>
+            <div class="form-group">
+              <label class="control-label  required" for="id_password">{% trans "Password" %}</label>
+              <div>
+                <input class="form-control" id="id_password" type="password" value="{{ admin_password }}" disabled="true" readonly="true"/>
+              </div>
+            </div>
+        </fieldset>
+    </form>
+  </dd>
+</dl>
+{% endblock %}
