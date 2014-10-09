@@ -1,0 +1,205 @@
+{% load i18n %}
+{% load url from future %}
+{% load form_helpers %}
+
+<h4>{% trans "Available Deployment Roles" %}</h4>
+<form method="POST" action="." class="boxes-form">
+{% csrf_token %}
+{% include 'horizon/common/_form_errors.html' with form=form %}
+
+<div class="boxes-available-roles">
+{% for role in roles %}{% spaceless %}
+    <div class="boxes-role-{{ role.name|slugify }} boxes-role" data-name="{{ role.name|slugify }}">
+        {{ role.field|add_bootstrap_class }}
+        {{ role.name|title }}
+    </div>
+{% endspaceless %}{% endfor %}
+</div>
+
+<h4>{% trans "Available Node Profiles" %}</h4>
+{% for flavor in flavors %}
+<div class="boxes-flavor">
+    <p>
+        <strong>Node Profile:</strong>
+        <i>{{ flavor.name }}</i>
+        {{ flavor.vcpus }} CPU,
+        {{ flavor.ram }}MB RAM,
+        {{ flavor.disk }}GB Disk
+    </p>
+    <div class="row">
+        <div class="col-xs-5">
+            <div class="boxes-drop-roles">
+            </div>
+            <div class="boxes-drop">
+                <i class="fa fa-plus"></i>
+            </div>
+        </div>
+        <div class="col-xs-7 boxes-nodes">
+            {% for node in flavor.nodes %}{% spaceless %}
+            <div class="boxes-node">free</div>
+            {% endspaceless %}{% endfor %}
+        </div>
+    </div>
+<div>
+{% endfor %}
+
+
+<hr>
+<button type="submit" class="btn btn-default">
+  <i class="fa fa-save"></i>
+  {% trans "Save changes" %}
+</button>
+</form>
+
+<script type="text/javascript">
+(window.$ || window.addHorizonLoadEvent)(function () {
+  function get_role_counts($flavor) {
+    var roles = {};
+    $flavor.find('div.boxes-drop-roles div.boxes-role').each(function () {
+      var $this = $(this);
+      var name = $this.data('name');
+      var count = +$this.find('input.number-picker').val();
+      roles[name] = count;
+    });
+    return roles;
+  }
+
+  function update_boxes() {
+    $('div.boxes-flavor').each(function () {
+        var $flavor = $(this);
+        var roles = get_role_counts($flavor);
+        var role_names = Object.getOwnPropertyNames(roles);
+        var count = 0;
+        var role = 0;
+        $flavor.find('div.boxes-nodes div.boxes-node').each(function () {
+          var $this = $(this);
+          $this.removeClass('boxes-role-controller boxes-role-compute boxes-role-block-storage boxes-role-object-storage');
+          while (count >= roles[role_names[role]]) {
+            role += 1;
+            count = 0;
+          }
+          if (!role_names[role]) {
+            $(this).html('free');
+          } else {
+            $this.addClass('boxes-role-' + role_names[role]).html('&nbsp;');
+          }
+          count += 1;
+        });
+    });
+  }
+
+  $('div.boxes-role').draggable({
+      revert: 'invalid',
+      helper: 'clone',
+      stack: '.boxes-roles',
+      opacity: 0.5
+  });
+  $('div.boxes-drop').droppable({
+      accept: 'div.boxes-role',
+      activeClass: 'boxes-drop-active',
+      hoverClass: 'boxes-drop-hover',
+      tolerance: 'touch',
+      drop: function (ev, ui) {
+        ui.draggable.appendTo($(this).prev('.boxes-drop-roles'));
+        ui.draggable.find('input.number-picker').val(1);
+        window.setTimeout(update_boxes, 0);
+      }
+  });
+  $('div.boxes-available-roles').droppable({
+      accept: 'div.boxes-role',
+      activeClass: 'boxes-drop-active',
+      hoverClass: 'boxes-drop-hover',
+      tolerance: 'touch',
+      drop: function (ev, ui) {
+        ui.draggable.appendTo(this);
+        ui.draggable.find('input.number-picker').val(0);
+        window.setTimeout(update_boxes, 0);
+      }
+  });
+
+  update_boxes();
+  $('input.number-picker').change(update_boxes);
+});
+</script>
+
+<style type="text/css">
+.boxes-node {
+    display: inline-block;
+    width: 60px;
+    height: 60px;
+    border-radius: 2px;
+    border: 1px solid #999;
+    background: #eee;
+    margin: 0 4px 4px 0;
+    text-align: center;
+    color: #666;
+    padding: 20px 4px 0 4px;
+}
+.boxes-available-roles {
+    border-radius: 2px;
+    background: #eee;
+    border: 1px dashed #666;
+    min-height: 42px;
+    min-width: 120px;
+    display: inline-block;
+    padding: 4px 0 0 4px;
+}
+.boxes-role {
+    display: inline-block;
+    padding: 6px;
+    border: 1px solid;
+    width: 180px;
+    cursor: move;
+    border-radius: 2px;
+    margin: 0 4px 4px 0;
+    background-color: #fce94f;
+    border-color: #edd400;
+    color: #c4a000;
+}
+.boxes-available-roles .boxes-role {
+    text-align: center;
+    width: 120px;
+}
+.boxes-available-roles .boxes-role .form-control {
+    display: none;
+}
+.boxes-role-controller {
+    background-color: #fcaf3e;
+    border-color: #f57900;
+    color: #ce5c00;
+}
+.boxes-role-compute {
+    background-color: #8ae234;
+    border-color: #73d216;
+    color: #4e9a06;
+}
+.boxes-role-object-storage {
+    background-color: #729fcf;
+    border-color: #3465a4;
+    color: #204a87;
+}
+.boxes-role-block-storage {
+    background-color: #ad7fa8;
+    border-color: #75507b;
+    color: #5c3566;
+}
+.boxes-drop {
+    display: inline-block;
+    padding: 6px;
+    border: 1px dashed;
+    width: 180px;
+    text-align: center;
+    border-radius: 2px;
+    background-color: #eee;
+    border-color: #666;
+    color: #444;
+}
+.boxes-drop-active {
+    background-color: #ccc;
+    border-style: solid;
+}
+.boxes-drop-hover {
+    background-color: #999;
+    border-style: solid;
+}
+</style>

@@ -16,7 +16,8 @@ from django.utils.translation import ugettext_lazy as _
 
 import horizon
 
-from tuskar_ui.infrastructure import dashboard
+import tuskar_ui.infrastructure.dashboard as tuskar_dashboard
+from tuskar_ui.infrastructure.overview.panel import Overview as TuskarOverview
 
 
 class Overview(horizon.Panel):
@@ -24,4 +25,5 @@ class Overview(horizon.Panel):
     slug = "overview"
 
 
-dashboard.Infrastructure.register(Overview)
+tuskar_dashboard.Infrastructure.unregister(TuskarOverview)
+tuskar_dashboard.Infrastructure.register(Overview)
