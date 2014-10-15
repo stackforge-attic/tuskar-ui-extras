@@ -16,12 +16,13 @@
 {% endspaceless %}{% endfor %}
 </div>
 
-<h4>{% trans "Available Node Profiles" %}</h4>
+<h4>{% trans "Available Flavors" %}</h4>
 {% for flavor in flavors %}
 <div class="boxes-flavor" data-flavor="{{ flavor.name }}">
     <p>
-        <strong>Node Profile:</strong>
+    <strong>{% trans "Flavor:" %}</strong>
         <i>{{ flavor.name }}</i>
+        {{ flavor.cpu_arch }},
         {{ flavor.vcpus }} CPU,
         {{ flavor.ram }}MB RAM,
         {{ flavor.disk }}GB Disk

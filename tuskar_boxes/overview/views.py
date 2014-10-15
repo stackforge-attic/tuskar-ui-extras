@@ -19,12 +19,12 @@ from tuskar_boxes.overview import forms
 
 def flavor_nodes(request, flavor):
     """Lists all nodes that match the given flavor exactly."""
-    for node in api.node.Node.list(request):
+    for node in api.node.Node.list(request, maintenance=False):
         if all([
             int(node.cpus) == int(flavor.vcpus),
             int(node.memory_mb) == int(flavor.ram),
             int(node.local_gb) == int(flavor.disk),
-            # TODO(rdopieralski) add architecture when available
+            node.cpu_arch == flavor.cpu_arch,
         ]):
             yield node
 
@@ -52,6 +52,7 @@ class IndexView(views.IndexView):
                 'vcpus': flavor.vcpus,
                 'ram': flavor.ram,
                 'disk': flavor.disk,
+                'cpu_arch': flavor.cpu_arch,
                 'nodes': nodes,
                 'roles': roles,
             }
