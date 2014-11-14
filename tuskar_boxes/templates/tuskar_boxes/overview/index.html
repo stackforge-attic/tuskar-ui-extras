@@ -2,6 +2,21 @@
 {% load i18n %}
 {% load url from future %}
 
+{% block css %}
+  {{block.super}}
+
+  {% load compress %}
+  {% compress css %}
+  <link href='{{ STATIC_URL }}tuskar_boxes/scss/tuskar_boxes.scss' type='text/scss' media='screen' rel='stylesheet' />
+  {% endcompress %}
+{% endblock %}
+
+{% block js %}
+  {{ block.super }}
+  <script src='{{ STATIC_URL }}tuskar_boxes/js/tuskar.boxes.js' type='text/javascript' charset='utf-8'></script>
+{% endblock %}
+
+
 {% block title %}{% trans 'My OpenStack Deployment' %}{% endblock %}
 
 {% block page_header %}
