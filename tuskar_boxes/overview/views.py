@@ -12,6 +12,8 @@
 #    License for the specific language governing permissions and limitations
 #    under the License.
 
+import django.utils.text
+
 from tuskar_ui import api
 from tuskar_ui.infrastructure.overview import views
 from tuskar_boxes.overview import forms
@@ -86,11 +88,24 @@ class IndexView(views.IndexView):
             for role in context['roles']:
                 role['flavor_field'] = context['form'][role['id'] + '-flavor']
         else:
-            context['nodes'] = [{
-                'uuid': node.uuid,
-                'role': node_role(self.request, node),
-                'state': node.state,
-                'state_icon': NODE_STATE_ICON.get(node.state,
-                                                  NODE_STATE_ICON[None]),
-            } for node in api.node.Node.list(self.request, maintenance=False)]
+            nodes = []
+            for node in api.node.Node.list(self.request, maintenance=False):
+                role = node_role(self.request, node)
+                nodes.append({
+                    'uuid': node.uuid,
+                    'role_name': role.name if role else '',
+                    'role_slug': django.utils.text.slugify(role.name)
+                        if role else '',
+                    'state': node.state,
+                    'state_slug': django.utils.text.slugify(
+                        unicode(node.state)),
+                    'state_icon': NODE_STATE_ICON.get(node.state,
+                                                      NODE_STATE_ICON[None]),
+                })
+            context['nodes'] = nodes
         return context
+
+    def get_progress_update(self, request, data):
+        out = super(IndexView, self).get_progress_update(request, data)
+        out['nodes'] = data.get('nodes', [])
+        return out
