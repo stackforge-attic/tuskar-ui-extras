@@ -18,6 +18,7 @@ import horizon
 from tuskar_ui.infrastructure import dashboard
 from tuskar_ui.infrastructure.nodes.panel import Nodes as TuskarNodes
 
+
 class Nodes(horizon.Panel):
     name = _("Nodes")
     slug = "nodes"

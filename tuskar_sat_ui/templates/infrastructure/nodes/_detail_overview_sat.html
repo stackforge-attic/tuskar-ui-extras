@@ -1,0 +1,17 @@
+{% extends "infrastructure/nodes/_detail_overview.html" %}
+{% load i18n %}
+
+{% block additional_data %}
+
+{% if node.uuid %}
+<div>
+<h3>{% trans "Errata" %}</h3>
+  {% if errata %}
+    {{ errata.render }}
+  {% else %}
+     <p>{% trans "No errata found" %}</p>
+  {% endif %}
+</div>
+{% endif %}
+
+{% endblock %}

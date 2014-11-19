@@ -13,7 +13,8 @@
 #    under the License.
 
 from tuskar_ui.infrastructure.nodes import views
+from tuskar_sat_ui.nodes import tabs
 
 
 class DetailView(views.DetailView):
-    template_name = 'infrastructure/nodes/sat_detail.html'
+    tab_group_class = tabs.NodeDetailTabs
