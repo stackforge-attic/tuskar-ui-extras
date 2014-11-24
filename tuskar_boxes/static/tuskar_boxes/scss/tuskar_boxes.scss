@@ -1,0 +1,98 @@
+.boxes-roles-menu {
+  position: absolute;
+  z-index: 1000;
+  width: 100%;
+  left: 0;
+  top: 48px;
+}
+.boxes-node {
+    display: inline-block;
+    width: 60px;
+    height: 60px;
+    border-radius: 2px;
+    border: 1px solid #999;
+    background: #eee;
+    margin: 0 4px 4px 0;
+    text-align: center;
+    color: #666;
+    padding: 20px 4px 0 4px;
+}
+.boxes-available-roles {
+    border-radius: 4px;
+    border: 1px dashed #666;
+    min-height: 42px;
+    min-width: 120px;
+    display: inline-block;
+    padding: 4px 0 0 4px;
+}
+.boxes-role {
+    opacity: 0.75;
+    padding: 6px;
+    border: 1px solid;
+    cursor: move;
+    border-radius: 2px;
+    background-color: #fce94f;
+    border-color: #edd400;
+    color: #c4a000;
+    margin: 0 0 4px 0;
+}
+.boxes-available-roles .boxes-role {
+    display: inline-block;
+    text-align: center;
+    width: 120px;
+    margin: 0 4px 4px 0;
+    border: 1px solid #999;
+    background: #eee;
+    color: #666;
+}
+.boxes-available-roles .boxes-role .form-control {
+    display: none;
+}
+.boxes-role-controller {
+    background-color: #fcaf3e;
+    border-color: #f57900;
+    color: #ce5c00;
+}
+.boxes-role-compute {
+    background-color: #8ae234;
+    border-color: #73d216;
+    color: #4e9a06;
+}
+.boxes-role-swift-storage {
+    background-color: #729fcf;
+    border-color: #3465a4;
+    color: #204a87;
+}
+.boxes-role-cinder-storage {
+    background-color: #ad7fa8;
+    border-color: #75507b;
+    color: #5c3566;
+}
+.boxes-role .number_picker {
+  border-color: inherit;
+}
+.boxes-role .number_picker,
+.boxes-role .number_picker a {
+  color: inherit;
+}
+.boxes-drop-group {
+  width: 100%;
+}
+.boxes-drop {
+    position: relative;
+    padding: 6px;
+    border: 1px dashed;
+    text-align: center;
+    border-radius: 4px;
+    border-color: #666;
+    color: #444;
+    cursor: pointer;
+}
+.boxes-drop-active {
+    background-color: #eee;
+    border-style: solid;
+}
+.boxes-drop-hover {
+    background-color: #999;
+    border-style: solid;
+}
