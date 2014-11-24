@@ -54,7 +54,7 @@ function usage {
 root=`pwd`
 venv=$root/.venv
 with_venv=tools/with_venv.sh
-included_dirs="tuskar_ui"
+included_dirs="tuskar_sat_ui tuskar_boxes"
 
 always_venv=0
 backup_env=0
@@ -145,12 +145,13 @@ function run_pylint {
 
 function run_jshint {
   echo "Running jshint ..."
-  jshint tuskar_ui/infrastructure/static/infrastructure
+  jshint tuskar_boxes
+  jshint tuskar_sat_ui
 }
 
 function run_pep8 {
   echo "Running flake8 ..."
-  DJANGO_SETTINGS_MODULE=tuskar_ui.test.settings ${command_wrapper} flake8 $included_dirs
+  DJANGO_SETTINGS_MODULE=test.settings ${command_wrapper} flake8 $included_dirs
 }
 
 function run_sphinx {
@@ -310,13 +311,13 @@ function run_tests_subset {
 }
 
 function run_tests_all {
-  echo "Running Tuskar-UI application tests"
-  export NOSE_XUNIT_FILE=tuskar_ui/nosetests.xml
+  echo "Running Tuskar-UI-Extras application tests"
+  export NOSE_XUNIT_FILE=test/nosetests.xml
   if [ "$NOSE_WITH_HTML_OUTPUT" = '1' ]; then
-    export NOSE_HTML_OUT_FILE='tuskar_ui_nose_results.html'
+    export NOSE_HTML_OUT_FILE='tuskar_ui_extras_nose_results.html'
   fi
   ${command_wrapper} ${COVERAGE_CMD} erase
-  ${command_wrapper} ${COVERAGE_CMD} run -p $root/manage.py test tuskar_ui --settings=tuskar_ui.test.settings $testopts
+  ${command_wrapper} ${COVERAGE_CMD} run -p $root/manage.py test tuskar_boxes tuskar_sat_ui --settings=test.settings $testopts
   # get results of the Horizon tests
   TUSKAR_UI_RESULT=$?
 
