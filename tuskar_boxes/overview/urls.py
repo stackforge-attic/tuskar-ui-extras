@@ -14,22 +14,12 @@
 
 from django.conf import urls
 
-from tuskar_ui.infrastructure.overview import views
-import tuskar_boxes.overview.views as boxes_views
+from tuskar_ui.infrastructure.overview import urls as tuskar_urls
+import tuskar_boxes.overview.views as views
 
 
-urlpatterns = urls.patterns(
+urlpatterns = tuskar_urls.urlpatterns[1:]
+urlpatterns.extend(urls.patterns(
     '',
-    urls.url(r'^$',
-             boxes_views.IndexView.as_view(),
-             name='index'),
-    urls.url(r'^deploy-confirmation$',
-             views.DeployConfirmationView.as_view(),
-             name='deploy_confirmation'),
-    urls.url(r'^undeploy-confirmation$',
-             views.UndeployConfirmationView.as_view(),
-             name='undeploy_confirmation'),
-    urls.url(r'^post-deploy-init$',
-             views.PostDeployInitView.as_view(),
-             name='post_deploy_init'),
-)
+    urls.url(r'^$', views.IndexView.as_view(), name='index'),
+))
