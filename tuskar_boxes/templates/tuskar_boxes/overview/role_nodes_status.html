@@ -1,0 +1,48 @@
+{% load i18n %}
+{% load url from future %}
+{% load horizon %}
+
+<h4>{% trans "Deployment Roles" %}</h4>
+<div class="row">
+  <div class="deploy-role-status col-xs-5">
+  {% for role in roles %}
+    <div class="boxes-role boxes-role-{{ role.name|slugify }} clearfix">
+        <div class="col-xs-2 deploy-role-count">
+          {% if  role.finished %}
+            {{ role.deployed_node_count }}
+          {% else %}
+            {{ role.deployed_node_count }}<small class="text-muted">/{{ role.planned_node_count }}</small>
+          {% endif %}
+        </div>
+        <div class="col-xs-10 deploy-role-name">
+          <strong class="deployment-roles-label">{{ role.name|capfirst }}</strong>
+        </div>
+      </div>
+  {% endfor %}
+  </div>
+  <div class="col-xs-7 boxes-nodes">
+      {% for node in nodes %}{% spaceless %}
+      <div class="boxes-node boxes-role-{{ node.role.name|slugify }} status-{{ node.status|slugify }}" title="{{ node.uuid }}">
+        <i class="fa fa-lg {{ node.state_icon }}"></i>
+      </div>
+      {% endspaceless %}{% endfor %}
+  </div>
+</div>
+
+<script type="text/html" id="roles-template">{% spaceless %}{% jstemplate %}
+[[#roles]]
+    <div class="boxes-role boxes-role boxes-role[[ slug ]] clearfix">
+      <div class="col-xs-2 deploy-role-count">
+        [[#finished]]
+          [[ deployed_node_count ]]
+        [[/finished]]
+        [[^finished]]
+          [[ deployed_node_count ]]<small class="text-muted">/[[ planned_node_count ]]</small>
+        [[/finished]]
+      </div>
+      <div class="col-xs-10 deploy-role-name">
+        <strong class="deployment-roles-label" >[[ name ]]</strong>
+      </div>
+    </div>
+[[/roles]]
+{% endjstemplate %}{% endspaceless %}</script>

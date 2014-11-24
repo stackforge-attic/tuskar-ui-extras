@@ -29,12 +29,15 @@
     opacity: 0.75;
     padding: 6px;
     border: 1px solid;
-    cursor: move;
     border-radius: 2px;
     background-color: #fce94f;
     border-color: #edd400;
     color: #c4a000;
     margin: 0 0 4px 0;
+    cursor: move;
+}
+.deploy-role-status .boxes-role {
+    cursor: default;
 }
 .boxes-available-roles .boxes-role {
     display: inline-block;

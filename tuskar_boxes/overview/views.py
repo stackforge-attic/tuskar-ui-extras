@@ -17,6 +17,20 @@ from tuskar_ui.infrastructure.overview import views
 from tuskar_boxes.overview import forms
 
 
+NODE_STATE_ICON = {
+    api.node.DISCOVERING_STATE: 'fa-search',
+    api.node.DISCOVERED_STATE: 'fa-search-plus',
+    api.node.DISCOVERY_FAILED_STATE: 'fa-search-minus',
+    api.node.MAINTENANCE_STATE: 'fa-exclamation-triangle',
+    api.node.FREE_STATE: 'fa-minus',
+    api.node.PROVISIONING_STATE: 'fa-spinner fa-spin',
+    api.node.PROVISIONED_STATE: 'fa-check',
+    api.node.DELETING_STATE: 'fa-spinner fa-spin',
+    api.node.PROVISIONING_FAILED_STATE: 'fa-exclamation-circle',
+    None: 'fa-question',
+}
+
+
 def flavor_nodes(request, flavor):
     """Lists all nodes that match the given flavor exactly."""
     for node in api.node.Node.list(request, maintenance=False):
@@ -27,6 +41,14 @@ def flavor_nodes(request, flavor):
             node.cpu_arch == flavor.cpu_arch,
         ]):
             yield node
+
+
+def node_role(request, node):
+    try:
+        resource = api.heat.Resource.get_by_node(request, node)
+    except LookupError:
+        return None
+    return resource.role
 
 
 class IndexView(views.IndexView):
@@ -40,27 +62,35 @@ class IndexView(views.IndexView):
         for role in context['roles']:
             flavor =  role['role'].flavor(context['plan'])
             role['flavor_name'] = flavor.name if flavor else ''
-        context['flavors'] = []
-        for flavor in flavors:
-            nodes = [{
-                'role': '',
-            } for node in flavor_nodes(self.request, flavor)]
-            roles = [role for role in context['roles']
-                     if role['flavor_name'] == flavor.name]
-            flavor = {
-                'name': flavor.name,
-                'vcpus': flavor.vcpus,
-                'ram': flavor.ram,
-                'disk': flavor.disk,
-                'cpu_arch': flavor.cpu_arch,
-                'nodes': nodes,
-                'roles': roles,
-            }
-            if nodes or roles:  # Don't list empty flavors
-                context['flavors'].append(flavor)
-            context['free_roles'] = [role for role in context['roles']
-                                     if not role['flavor_name']]
         if not context['stack']:
+            context['flavors'] = []
+            for flavor in flavors:
+                nodes = [{
+                    'role': '',
+                } for node in flavor_nodes(self.request, flavor)]
+                roles = [role for role in context['roles']
+                         if role['flavor_name'] == flavor.name]
+                flavor = {
+                    'name': flavor.name,
+                    'vcpus': flavor.vcpus,
+                    'ram': flavor.ram,
+                    'disk': flavor.disk,
+                    'cpu_arch': flavor.cpu_arch,
+                    'nodes': nodes,
+                    'roles': roles,
+                }
+                if nodes or roles:  # Don't list empty flavors
+                    context['flavors'].append(flavor)
+                context['free_roles'] = [role for role in context['roles']
+                                         if not role['flavor_name']]
             for role in context['roles']:
                 role['flavor_field'] = context['form'][role['id'] + '-flavor']
+        else:
+            context['nodes'] = [{
+                'uuid': node.uuid,
+                'role': node_role(self.request, node),
+                'state': node.state,
+                'state_icon': NODE_STATE_ICON.get(node.state,
+                                                  NODE_STATE_ICON[None]),
+            } for node in api.node.Node.list(self.request, maintenance=False)]
         return context
