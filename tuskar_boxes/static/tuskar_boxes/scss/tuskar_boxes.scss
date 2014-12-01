@@ -112,3 +112,25 @@
 .boxes-flavor {
     padding-bottom: 10px;
 }
+
+.role-distribution {
+    .roles-graph-label {
+        margin-top: 8px;
+    }
+    .role-controller {
+        color: #ce5c00;
+    }
+    .role-compute {
+        color: #4e9a06;
+    }
+    .role-swift-storage {
+        color: #204a87;
+    }
+    .role-cinder-storage {
+        color: #5c3566;
+    }
+}
+
+.roles-graph-label {
+    margin-top: 12px;
+}

@@ -1,0 +1,35 @@
+{% load i18n %}
+{% load url from future %}
+{% load horizon %}
+
+<div class="row">
+    <div class="col-xs-7">
+        <h4>{% trans "Deployment Roles" %}</h4>
+    </div>
+    <div class="col-xs-5">
+        <div class="roles-graph-label">
+            {% trans "System Load in Last Hour" %}
+        </div>
+    </div>
+</div>
+<div class="row">
+  <div class="deploy-role-status col-xs-12">
+  {% for role in roles %}
+    <div class="boxes-role boxes-role-{{ role.name|slugify }} clearfix">
+        <div class="col-xs-1 deploy-role-count">
+          {{ role.deployed_node_count }}
+        </div>
+        <div class="col-xs-6 deploy-role-name">
+          <strong class="deployment-roles-label">{{ role.name|capfirst }}</strong>
+        </div>
+        <div class="col-xs-5 deploy-role-graph">
+            {% if role.graph_url %}
+                {% include "infrastructure/_performance_chart.html" with url=role.graph_url %}
+            {% else %}
+                {% trans "Metering service disabled" %}
+            {% endif %}
+        </div>
+      </div>
+  {% endfor %}
+  </div>
+</div>

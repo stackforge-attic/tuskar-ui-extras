@@ -43,9 +43,35 @@
   </div>
   <div class="col-xs-8">
     {% if stack %}
-      {% include "tuskar_boxes/overview/role_nodes_status.html" %}
+      {% if stack.is_deployed and stack.is_initialized %}
+        {% include "tuskar_boxes/overview/role_nodes_live.html" %}
+      {% else %}
+        {% include "tuskar_boxes/overview/role_nodes_status.html" %}
+      {% endif %}
     {% else %}
       {% include "tuskar_boxes/overview/role_nodes_edit.html" %}
+    {% endif %}
+  </div>
+</div>
+
+<div class="row">
+  <div class="col-xs-12">
+    {% if stack and stack.is_deployed and stack.is_initialized %}
+        <h4>Nodes Distribution</h4>
+        <div class="role-distribution">
+            {% for role in roles %}
+                {% if role.distribution %}
+                <span class="role-{{ role.name|slugify }}">
+                    {{ role.name|capfirst }}: {{ role.distribution }}%
+                </span>
+                {% endif %}
+            {% endfor %}
+        </div>
+        <div class="boxes-nodes">
+            {% for node in nodes %}{% spaceless %}
+                <div class="boxes-node boxes-role-{{ node.role_slug }}"></div>
+            {% endspaceless %}{% endfor %}
+        </div>
     {% endif %}
   </div>
 </div>
