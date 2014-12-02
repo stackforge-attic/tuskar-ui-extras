@@ -13,8 +13,8 @@
 #    under the License.
 
 from django.conf import urls
-
 from tuskar_ui.infrastructure.nodes import views
+
 from tuskar_sat_ui.nodes import views as sat_views
 
 

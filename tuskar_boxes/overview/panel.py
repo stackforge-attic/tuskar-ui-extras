@@ -13,11 +13,9 @@
 #    under the License.
 
 from django.utils.translation import ugettext_lazy as _
-
 import horizon
-
 import tuskar_ui.infrastructure.dashboard as tuskar_dashboard
-from tuskar_ui.infrastructure.overview.panel import Overview as TuskarOverview
+from tuskar_ui.infrastructure.overview import panel
 
 
 class Overview(horizon.Panel):
@@ -25,5 +23,5 @@ class Overview(horizon.Panel):
     slug = "overview"
 
 
-tuskar_dashboard.Infrastructure.unregister(TuskarOverview)
+tuskar_dashboard.Infrastructure.unregister(panel.Overview)
 tuskar_dashboard.Infrastructure.register(Overview)

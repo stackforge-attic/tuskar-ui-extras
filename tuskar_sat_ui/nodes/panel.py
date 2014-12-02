@@ -14,9 +14,8 @@
 
 from django.utils.translation import ugettext_lazy as _
 import horizon
-
 from tuskar_ui.infrastructure import dashboard
-from tuskar_ui.infrastructure.nodes.panel import Nodes as TuskarNodes
+from tuskar_ui.infrastructure.nodes import panel
 
 
 class Nodes(horizon.Panel):
@@ -24,5 +23,5 @@ class Nodes(horizon.Panel):
     slug = "nodes"
 
 
-dashboard.Infrastructure.unregister(TuskarNodes)
+dashboard.Infrastructure.unregister(panel.Nodes)
 dashboard.Infrastructure.register(Nodes)

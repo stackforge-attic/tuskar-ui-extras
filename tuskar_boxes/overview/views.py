@@ -13,9 +13,9 @@
 #    under the License.
 
 import django.utils.text
-
 from tuskar_ui import api
 from tuskar_ui.infrastructure.overview import views
+
 from tuskar_boxes.overview import forms
 
 
@@ -62,7 +62,7 @@ class IndexView(views.IndexView):
         flavors = api.flavor.Flavor.list(self.request)
         flavors.sort(key=lambda np: (np.vcpus, np.ram, np.disk))
         for role in context['roles']:
-            flavor =  role['role'].flavor(context['plan'])
+            flavor = role['role'].flavor(context['plan'])
             role['flavor_name'] = flavor.name if flavor else ''
         if not context['stack']:
             context['flavors'] = []
@@ -94,8 +94,8 @@ class IndexView(views.IndexView):
                 nodes.append({
                     'uuid': node.uuid,
                     'role_name': role.name if role else '',
-                    'role_slug': django.utils.text.slugify(role.name)
-                        if role else '',
+                    'role_slug': (
+                        django.utils.text.slugify(role.name) if role else ''),
                     'state': node.state,
                     'state_slug': django.utils.text.slugify(
                         unicode(node.state)),

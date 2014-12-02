@@ -43,12 +43,12 @@ class EditPlan(forms.EditPlan):
             fields['%s-flavor' % role.id] = field
         return fields
 
-
     def handle(self, request, data):
         result = super(EditPlan, self).handle(request, data)
         parameters = dict(
             (field.role.flavor_parameter_name, data[name])
-            for (name, field) in self.fields.items() if name.endswith('-flavor')
+            for (name, field) in self.fields.items()
+            if name.endswith('-flavor')
         )
         try:
             self.plan = self.plan.patch(request, self.plan.uuid, parameters)

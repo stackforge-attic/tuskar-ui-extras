@@ -11,16 +11,21 @@
 #    WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
 #    License for the specific language governing permissions and limitations
 #    under the License.
-import requests
-import urllib
+import collections
 
-from collections import namedtuple
 from horizon import tabs
+import requests
 from tuskar_ui.infrastructure.nodes import tabs as nodes_tabs
-from .tables import ErrataTable
+
+from tuskar_sat_ui.nodes import tables
 
 
-ErrataItem = namedtuple('ErrataItem', ['title', 'type', 'id', 'issued'])
+ErrataItem = collections.namedtuple('ErrataItem', [
+    'title',
+    'type',
+    'id',
+    'issued',
+])
 
 
 class DetailOverviewTab(nodes_tabs.DetailOverviewTab):
@@ -67,7 +72,7 @@ class DetailOverviewTab(nodes_tabs.DetailOverviewTab):
         else:
             data = [ErrataItem(x['title'], x['type'], x['id'], x['issued'])
                     for x in errata]
-            result['errata'] = ErrataTable(request, data=data)
+            result['errata'] = tables.ErrataTable(request, data=data)
         return result
 
 

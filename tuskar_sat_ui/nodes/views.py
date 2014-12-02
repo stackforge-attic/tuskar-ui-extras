@@ -13,6 +13,7 @@
 #    under the License.
 
 from tuskar_ui.infrastructure.nodes import views
+
 from tuskar_sat_ui.nodes import tabs
 
 

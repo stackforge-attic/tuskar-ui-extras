@@ -13,8 +13,8 @@
 #    under the License.
 
 from django.conf import urls
-
 from tuskar_ui.infrastructure.overview import urls as tuskar_urls
+
 import tuskar_boxes.overview.views as views
 
 
