@@ -26,14 +26,27 @@
 <h4>{% trans "Available Flavors" %}</h4>
 {% for flavor in flavors %}
 <div class="boxes-flavor" data-flavor="{{ flavor.name }}">
-    <p>
-    <strong>{% trans "Flavor:" %}</strong>
-        <i>{{ flavor.name }}</i>
-        {{ flavor.cpu_arch }},
-        {{ flavor.vcpus }} CPU,
-        {{ flavor.ram }}MB RAM,
-        {{ flavor.disk }}GB Disk
-    </p>
+  <div class="row">
+    <div class="col-md-9">
+      <strong>{% trans "Flavor:" %}</strong>
+      <i>{{ flavor.name }}</i>
+      {{ flavor.cpu_arch }},
+      {{ flavor.vcpus }} CPU,
+      {{ flavor.ram }}MB RAM,
+      {{ flavor.disk }}GB Disk
+    </div>
+    <div class="col-md-3">
+      <span class="pull-right">
+        {% trans "Free Nodes:" %}
+        <span class="free-nodes"></span> / {{ flavor.nodes|length }}
+      </span>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-md-12">
+      <div class="separator-line"></div>
+    </div>
+  </div>
     <div class="row">
         <div class="col-xs-5">
             <div class="boxes-drop-roles">

@@ -38,18 +38,21 @@ tuskar.boxes = (function () {
       var role = 0;
       $flavor.find('div.boxes-nodes div.boxes-node').each(function () {
         var $this = $(this);
-        $this.removeClass('boxes-role-controller boxes-role-compute boxes-role-cinder-storage boxes-role-swift-storage');
+        $this.removeClass('boxes-role-controller boxes-role-compute boxes-role-cinder-storage boxes-role-swift-storage boxes-role-none');
         while (count >= roles[role_names[role]]) {
           role += 1;
           count = 0;
         }
         if (!role_names[role]) {
           $(this).html('free');
+          $(this).addClass('boxes-role-none');
         } else {
           $this.addClass('boxes-role-' + role_names[role]).html('&nbsp;');
         }
         count += 1;
       });
+      var free_nodes = $flavor.find('div.boxes-nodes div.boxes-role-none').length;
+      $flavor.find('span.free-nodes').text(free_nodes);
     }
 
     function update_boxes() {
