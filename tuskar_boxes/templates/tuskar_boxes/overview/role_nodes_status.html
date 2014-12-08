@@ -20,7 +20,7 @@
       </div>
   {% endfor %}
   </div>
-  <div class="col-xs-7 boxes-nodes">
+  <div class="col-xs-7 boxes-nodes {% if nodes|length >= 100 %}boxes-nodes-small{% elif nodes|length >= 25 %}boxes-nodes-medium{% endif %}">
       {% for node in nodes %}{% spaceless %}
       <div class="boxes-node boxes-role-{{ node.role_slug }} status-{{ node.state_slug }}" title="{{ node.uuid }}">
         <i class="fa fa-lg {{ node.state_icon }}"></i>
