@@ -20,27 +20,44 @@ tuskar.boxes = (function () {
       return roles;
     }
 
+    function update_maximums($flavor, roles) {
+      var nodes = $flavor.find('div.boxes-nodes div.boxes-node').length;
+      var used = 0;
+      $.each(roles, function (key, value) { used += value; });
+      $flavor.find('div.boxes-drop-roles div.boxes-role').each(function () {
+        var $this = $(this);
+        var role = $this.data('name');
+        var $picker = $this.find('input.number-picker');
+        $picker.attr('max', Math.max(0, nodes - used + roles[role]));
+      });
+    }
+
+    function update_nodes($flavor, roles) {
+      var role_names = Object.getOwnPropertyNames(roles);
+      var count = 0;
+      var role = 0;
+      $flavor.find('div.boxes-nodes div.boxes-node').each(function () {
+        var $this = $(this);
+        $this.removeClass('boxes-role-controller boxes-role-compute boxes-role-cinder-storage boxes-role-swift-storage');
+        while (count >= roles[role_names[role]]) {
+          role += 1;
+          count = 0;
+        }
+        if (!role_names[role]) {
+          $(this).html('free');
+        } else {
+          $this.addClass('boxes-role-' + role_names[role]).html('&nbsp;');
+        }
+        count += 1;
+      });
+    }
+
     function update_boxes() {
       $('div.boxes-flavor').each(function () {
           var $flavor = $(this);
           var roles = get_role_counts($flavor);
-          var role_names = Object.getOwnPropertyNames(roles);
-          var count = 0;
-          var role = 0;
-          $flavor.find('div.boxes-nodes div.boxes-node').each(function () {
-            var $this = $(this);
-            $this.removeClass('boxes-role-controller boxes-role-compute boxes-role-cinder-storage boxes-role-swift-storage');
-            while (count >= roles[role_names[role]]) {
-              role += 1;
-              count = 0;
-            }
-            if (!role_names[role]) {
-              $(this).html('free');
-            } else {
-              $this.addClass('boxes-role-' + role_names[role]).html('&nbsp;');
-            }
-            count += 1;
-          });
+          update_nodes($flavor, roles);
+          update_maximums($flavor, roles);
       });
     }
 
@@ -58,7 +75,7 @@ tuskar.boxes = (function () {
         drop: function (ev, ui) {
           ui.draggable.appendTo($(this).parent().prev('.boxes-drop-roles'));
           var $count = ui.draggable.find('input.number-picker');
-          if (+$count.val() < 1) { $count.val(1); }
+          if (+$count.val() < 1 && +$count.attr('max') >= 1) { $count.val(1); }
           ui.draggable.find('input.boxes-flavor'
               ).val($(this).closest('.boxes-flavor').data('flavor'));
           $count.trigger('change');
