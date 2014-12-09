@@ -1,0 +1,18 @@
+{% load i18n %}
+<div
+  class="boxes-node"
+  data-toggle="popover"
+  title="{{ node.role_name|title|default:_('Free') }} {% trans 'node' %}"
+  data-content="<dl>
+    <dt>{% trans "Node UUID" %}</dt>
+    <dd>{{ node.uuid }}</dd>
+    <dt>{% trans "Architecture" %}</dt>
+    <dd>{{ node.cpu_arch }}</dd>
+    <dt>{% trans "CPUs" %}</dt>
+    <dd>{{ node.cpus }}</dt>
+    <dt>{% trans "RAM (MB)" %}</dt>
+    <dd>{{ node.memory_mb }}</dd>
+    <dt>{% trans "HDD (GB)" %}</dt>
+    <dd>{{ node.local_gb }}</dd>
+  </dl>"
+>free</div>

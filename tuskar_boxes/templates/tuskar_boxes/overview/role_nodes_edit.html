@@ -68,7 +68,7 @@
         </div>
         <div class="col-xs-7 boxes-nodes">
             {% for node in flavor.nodes %}{% spaceless %}
-            <div class="boxes-node">free</div>
+            {% include "tuskar_boxes/overview/_node_info.html" with node=node %}
             {% endspaceless %}{% endfor %}
         </div>
     </div>

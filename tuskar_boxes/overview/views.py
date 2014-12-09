@@ -53,56 +53,71 @@ def node_role(request, node):
     return resource.role
 
 
+def _node_data(request, nodes):
+    for node in nodes:
+        role = node_role(request, node)
+        yield {
+            'uuid': node.uuid,
+            'role_name': role.name if role else '',
+            'role_slug': django.utils.text.slugify(role.name) if role else '',
+            'state': node.state,
+            'state_slug': django.utils.text.slugify(unicode(node.state)),
+            'state_icon': NODE_STATE_ICON.get(node.state,
+                                              NODE_STATE_ICON[None]),
+            'cpu_arch': node.cpu_arch,
+            'cpus': node.cpus,
+            'memory_mb': node.memory_mb,
+            'local_gb': node.local_gb,
+        }
+
+
+def _flavor_data(request, flavors, flavor_roles):
+    for flavor in flavors:
+        nodes = list(_node_data(request, flavor_nodes(request, flavor)))
+        roles = flavor_roles.get(flavor.name, [])
+        if nodes or roles:
+            # Don't list empty flavors
+            yield {
+                'name': flavor.name,
+                'vcpus': flavor.vcpus,
+                'ram': flavor.ram,
+                'disk': flavor.disk,
+                'cpu_arch': flavor.cpu_arch,
+                'nodes': nodes,
+                'roles': roles,
+            }
+
+
 class IndexView(views.IndexView):
     template_name = "tuskar_boxes/overview/index.html"
     form_class = forms.EditPlan
 
     def get_context_data(self, *args, **kwargs):
         context = super(IndexView, self).get_context_data(*args, **kwargs)
-        flavors = api.flavor.Flavor.list(self.request)
-        flavors.sort(key=lambda np: (np.vcpus, np.ram, np.disk))
-        for role in context['roles']:
-            flavor = role['role'].flavor(context['plan'])
-            role['flavor_name'] = flavor.name if flavor else ''
         if not context['stack']:
-            context['flavors'] = []
-            for flavor in flavors:
-                nodes = [{
-                    'role': '',
-                } for node in flavor_nodes(self.request, flavor)]
-                roles = [role for role in context['roles']
-                         if role['flavor_name'] == flavor.name]
-                flavor = {
-                    'name': flavor.name,
-                    'vcpus': flavor.vcpus,
-                    'ram': flavor.ram,
-                    'disk': flavor.disk,
-                    'cpu_arch': flavor.cpu_arch,
-                    'nodes': nodes,
-                    'roles': roles,
-                }
-                if nodes or roles:  # Don't list empty flavors
-                    context['flavors'].append(flavor)
-                context['free_roles'] = [role for role in context['roles']
-                                         if not role['flavor_name']]
-            for role in context['roles']:
+            roles = context['roles']
+            free_roles = []
+            flavor_roles = {}
+            for role in roles:
                 role['flavor_field'] = context['form'][role['id'] + '-flavor']
+                flavor = role['role'].flavor(context['plan'])
+                if flavor:
+                    role['flavor_name'] = flavor.name
+                    flavor_roles.setdefault(flavor.name, []).append(role)
+                else:
+                    role['flavor_name'] = ''
+                    free_roles.append(role)
+            context['free_roles'] = free_roles
+
+            flavors = api.flavor.Flavor.list(self.request)
+            flavors.sort(key=lambda np: (np.vcpus, np.ram, np.disk))
+            context['flavors'] = list(
+                _flavor_data(self.request, flavors, flavor_roles))
         else:
-            nodes = []
-            for node in api.node.Node.list(self.request, maintenance=False):
-                role = node_role(self.request, node)
-                nodes.append({
-                    'uuid': node.uuid,
-                    'role_name': role.name if role else '',
-                    'role_slug': (
-                        django.utils.text.slugify(role.name) if role else ''),
-                    'state': node.state,
-                    'state_slug': django.utils.text.slugify(
-                        unicode(node.state)),
-                    'state_icon': NODE_STATE_ICON.get(node.state,
-                                                      NODE_STATE_ICON[None]),
-                })
-            context['nodes'] = nodes
+            context['nodes'] = list(_node_data(
+                self.request,
+                api.node.Node.list(self.request, maintenance=False),
+            ))
         return context
 
     def get_progress_update(self, request, data):
