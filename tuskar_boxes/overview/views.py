@@ -142,7 +142,7 @@ class IndexView(views.IndexView):
                         reverse('horizon:infrastructure:roles:performance',
                                 args=[role['id']]) + '?' +
                         metering.url_part('hardware.cpu.load.1min', False) +
-                        '&date_options=1'
+                        '&date_options=0.041666'
                     )
         return context
 
