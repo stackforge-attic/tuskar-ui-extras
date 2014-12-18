@@ -20,4 +20,5 @@ docutils==0.9.1
 oslosphinx
 
 http://tarballs.openstack.org/horizon/horizon-master.tar.gz#egg=horizon
+http://tarballs.openstack.org/python-tuskarclient/python-tuskarclient-master.tar.gz#egg=python-tuskarclient
 http://tarballs.openstack.org/tuskar-ui/tuskar-ui-master.tar.gz#egg=tuskar-ui
