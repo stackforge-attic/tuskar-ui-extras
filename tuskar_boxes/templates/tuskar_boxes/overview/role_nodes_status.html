@@ -20,13 +20,7 @@
       </div>
   {% endfor %}
   </div>
-  <div class="col-xs-7 boxes-nodes {% if nodes|length >= 100 %}boxes-nodes-small{% elif nodes|length >= 25 %}boxes-nodes-medium{% endif %}">
-      {% for node in nodes %}{% spaceless %}
-      <div class="boxes-node boxes-role-{{ node.role_slug }} status-{{ node.state_slug }}" title="{{ node.uuid }}">
-        <i class="fa fa-lg {{ node.state_icon }}"></i>
-      </div>
-      {% endspaceless %}{% endfor %}
-  </div>
+  {% include "tuskar_boxes/overview/_node_info.html" with nodes=nodes classes="col-xs-7" %}
 </div>
 
 <script type="text/html" id="roles-template">{% spaceless %}{% jstemplate %}
@@ -46,10 +40,4 @@
     </div>
 [[/roles]]
 {% endjstemplate %}{% endspaceless %}</script>
-<script type="text/html" id="nodes-template">{% spaceless %}{% jstemplate %}
-[[#nodes]]
-  <div class="boxes-node boxes-role-[[ role_slug ]] status-[[ state_slug ]]" title="[[ uuid ]]">
-    <i class="fa fa-lg [[ state_icon ]]"></i>
-  </div>
-[[/nodes]]
-{% endjstemplate %}{% endspaceless %}</script>
+{% include "tuskar_boxes/overview/_node_info_js.html" %}

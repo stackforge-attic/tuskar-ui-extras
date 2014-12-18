@@ -7,7 +7,14 @@ tuskar.boxes_progress = function () {
   };
 
   module.update_progress = function (data) {
-    $('div.boxes-nodes').html(module.nodes_template.render(data));
+    var $nodes = $('div.boxes-nodes');
+    $nodes.html(module.nodes_template.render(data));
+    $nodes.find('div.boxes-node').popover({
+      'trigger': 'hover',
+      'placement': 'auto',
+      'delay': 500,
+      'html': true
+    });
   };
 
   // Attach to the original update procedure.

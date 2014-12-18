@@ -67,11 +67,7 @@
                 {% endif %}
             {% endfor %}
         </div>
-        <div class="boxes-nodes {% if nodes|length >= 100 %}boxes-nodes-small{% elif nodes|length >= 25 %}boxes-nodes-medium{% endif %}">
-            {% for node in nodes %}{% spaceless %}
-                <div class="boxes-node boxes-role-{{ node.role_slug }}"></div>
-            {% endspaceless %}{% endfor %}
-        </div>
+        {% include "tuskar_boxes/overview/_node_info.html" with nodes=nodes %}
     {% endif %}
   </div>
 </div>
