@@ -8,18 +8,7 @@
 
 <div class="boxes-available-roles">
 {% for role in free_roles %}{% spaceless %}
-    <div class="boxes-role-{{ role.name|slugify }} boxes-role" data-name="{{ role.name|slugify }}">
-        {{ role.field|add_bootstrap_class }}
-        {{ role.flavor_field|add_bootstrap_class }}
-        {{ role.name|title }}
-      <a
-        name="role-edit-{{role.name|slugify}}"
-        href="{% url 'horizon:infrastructure:roles:update' role_id=role.id %}"
-        class="btn pull-right hidden">
-        <b class="fa fa-lg fa-fw fa-pencil"></b>
-      </a>
-
-    </div>
+  {% include "tuskar_boxes/overview/_role_info.html" with role=role %}
 {% endspaceless %}{% endfor %}
 </div>
 
@@ -51,17 +40,7 @@
         <div class="col-xs-5">
             <div class="boxes-drop-roles">
             {% for role in flavor.roles %}{% spaceless %}
-                <div class="boxes-role-{{ role.name|slugify }} boxes-role" data-name="{{ role.name|slugify }}">
-                    {{ role.field|add_bootstrap_class }}
-                    {{ role.flavor_field|add_bootstrap_class }}
-                    {{ role.name|title }}
-                  <a
-                    name="role-edit-{{role.name|slugify}}"
-                    href="{% url 'horizon:infrastructure:roles:update' role_id=role.id %}"
-                    class="btn pull-right">
-                    <b class="fa fa-lg fa-fw fa-pencil"></b>
-                  </a>
-                </div>
+              {% include "tuskar_boxes/overview/_role_info.html" with role=role %}
             {% endspaceless %}{% endfor %}
             </div>
             <div class="btn-group boxes-drop-group">

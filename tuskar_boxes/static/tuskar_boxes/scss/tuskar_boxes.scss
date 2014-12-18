@@ -38,6 +38,26 @@
     min-width: 120px;
     display: inline-block;
     padding: 4px 0 0 4px;
+    .boxes-role {
+        display: inline-block;
+        text-align: center;
+        width: 120px;
+        margin: 0 4px 4px 0;
+        border: 1px solid #999;
+        background: #eee;
+        color: #666;
+        .deploy-role-icon, .deploy-role-count, .form-control {
+            display: none;
+        }
+        .deploy-role-label {
+            display: block;
+            width: 100%;
+            .deployment-roles-label {
+                margin: 0;
+                font-weight: normal;
+            }
+        }
+    }
 }
 .boxes-role {
     opacity: 0.75;
@@ -52,18 +72,6 @@
 }
 .deploy-role-status .boxes-role {
     cursor: default;
-}
-.boxes-available-roles .boxes-role {
-    display: inline-block;
-    text-align: center;
-    width: 120px;
-    margin: 0 4px 4px 0;
-    border: 1px solid #999;
-    background: #eee;
-    color: #666;
-}
-.boxes-available-roles .boxes-role .form-control {
-    display: none;
 }
 .boxes-role-controller {
     background-color: #fcaf3e;
@@ -88,6 +96,7 @@
 .boxes-role .number_picker {
   border-color: inherit;
 }
+.boxes-role .deploy-role-icon a,
 .boxes-role .number_picker,
 .boxes-role .number_picker a {
   color: inherit;
