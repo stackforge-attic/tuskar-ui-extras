@@ -1,0 +1,26 @@
+{% spaceless %}
+{% load i18n %}
+{% load url from future %}
+{% load form_helpers %}
+<div
+  class="boxes-role-{{ role.name|slugify }} boxes-role"
+  data-name="{{ role.name|slugify }}"
+>
+  <div class="row">
+    <div class="col-xs-3 deploy-role-count">
+      {{ role.field|add_bootstrap_class }}
+      {{ role.flavor_field|add_bootstrap_class }}
+    </div>
+    <div class="col-xs-6 deploy-role-label">
+      <div class="deployment-roles-label">{{ role.name|title }}</div>
+    </div>
+    <div class="col-xs-3 deploy-role-icon">
+      <a name="role-edit-{{role.name|slugify}}"
+      href="{% url 'horizon:infrastructure:roles:update' role_id=role.id %}"
+      class="btn">
+        <b class="fa fa-lg fa-fw fa-pencil"></b>
+      </a>
+    </div>
+  </div>
+</div>
+{% endspaceless %}
