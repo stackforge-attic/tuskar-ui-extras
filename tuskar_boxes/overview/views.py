@@ -98,54 +98,53 @@ class IndexView(views.IndexView):
     template_name = "tuskar_boxes/overview/index.html"
     form_class = forms.EditPlan
 
-    def get_context_data(self, *args, **kwargs):
-        context = super(IndexView, self).get_context_data(*args, **kwargs)
-        if not context['stack']:
-            roles = context['roles']
+    def get_data(self, request, context, *args, **kwargs):
+        data = super(IndexView, self).get_data(request, context,
+                                               *args, **kwargs)
+        if not data['stack']:
+            roles = data['roles']
             free_roles = []
             flavor_roles = {}
             for role in roles:
-                role['flavor_field'] = context['form'][role['id'] + '-flavor']
-                flavor = role['role'].flavor(context['plan'])
+                role['flavor_field'] = data['form'][role['id'] + '-flavor']
+                flavor = role['role'].flavor(data['plan'])
                 if flavor:
                     role['flavor_name'] = flavor.name
                     flavor_roles.setdefault(flavor.name, []).append(role)
                 else:
                     role['flavor_name'] = ''
                     free_roles.append(role)
-            context['free_roles'] = free_roles
+            data['free_roles'] = free_roles
 
             flavors = api.flavor.Flavor.list(self.request)
             flavors.sort(key=lambda np: (np.vcpus, np.ram, np.disk))
-            context['flavors'] = list(
+            data['flavors'] = list(
                 _flavor_data(self.request, flavors, flavor_roles))
         else:
             nodes = list(_node_data(
-                self.request,
-                api.node.Node.list(self.request, maintenance=False),
+                request, api.node.Node.list(request, maintenance=False),
             ))
 
             nodes.sort(key=lambda node: node.get('role_name'))
             nodes.reverse()
-
-            context['nodes'] = nodes
+            data['nodes'] = nodes
             distribution = collections.Counter()
 
             for node in nodes:
                 distribution[node['role_name']] += 1
-            for role in context['roles']:
+            for role in data['roles']:
                 role['distribution'] = int(float(distribution[role['name']]) /
                                            len(nodes) * 100)
 
-            if api_base.is_service_enabled(self.request, 'metering'):
-                for role in context['roles']:
+            if api_base.is_service_enabled(request, 'metering'):
+                for role in data['roles']:
                     role['graph_url'] = (
                         reverse('horizon:infrastructure:roles:performance',
                                 args=[role['id']]) + '?' +
                         metering.url_part('hardware.cpu.load.1min', False) +
                         '&date_options=0.041666'
                     )
-        return context
+        return data
 
     def get_progress_update(self, request, data):
         out = super(IndexView, self).get_progress_update(request, data)
