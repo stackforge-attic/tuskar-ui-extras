@@ -13,18 +13,21 @@
 #    under the License.
 
 import collections
+import operator
 
 from django.core.urlresolvers import reverse
 import django.utils.text
 from openstack_dashboard.api import base as api_base
 
 from tuskar_ui import api
+from tuskar_ui.infrastructure.flavors import utils
 from tuskar_ui.infrastructure.overview import views
 from tuskar_ui.utils import metering
 
 from tuskar_boxes.overview import forms
 
 
+MATCHING_DEPLOYMENT_MODE = utils.matching_deployment_mode()
 NODE_STATE_ICON = {
     api.node.DISCOVERING_STATE: 'fa-search',
     api.node.DISCOVERED_STATE: 'fa-search-plus',
@@ -39,15 +42,24 @@ NODE_STATE_ICON = {
 }
 
 
-def flavor_nodes(request, flavor):
-    """Lists all nodes that match the given flavor exactly."""
+def flavor_nodes(request, flavor, exact_match=True):
+    """Lists all nodes that match the given flavor.
+
+       If exact_match is True, only nodes that match exactly will be listed.
+       Otherwise, all nodes that have at least the required resources will
+       be listed.
+    """
+    if exact_match:
+        matches = operator.eq
+    else:
+        matches = operator.ge
     for node in api.node.Node.list(request, maintenance=False):
-        if all([
-            int(node.cpus) == int(flavor.vcpus),
-            int(node.memory_mb) == int(flavor.ram),
-            int(node.local_gb) == int(flavor.disk),
-            node.cpu_arch == flavor.cpu_arch,
-        ]):
+        if all(matches(*pair) for pair in (
+            (int(node.cpus or 0), int(flavor.vcpus or 0)),
+            (int(node.memory_mb or 0), int(flavor.ram or 0)),
+            (int(node.local_gb or 0), int(flavor.disk or 0)),
+            (node.cpu_arch, flavor.cpu_arch),
+        )):
             yield node
 
 
@@ -79,7 +91,9 @@ def _node_data(request, nodes):
 
 def _flavor_data(request, flavors, flavor_roles):
     for flavor in flavors:
-        nodes = list(_node_data(request, flavor_nodes(request, flavor)))
+        nodes = list(_node_data(request,
+                                flavor_nodes(request, flavor,
+                                             MATCHING_DEPLOYMENT_MODE)))
         roles = flavor_roles.get(flavor.name, [])
         if nodes or roles:
             # Don't list empty flavors
@@ -102,22 +116,25 @@ class IndexView(views.IndexView):
         data = super(IndexView, self).get_data(request, context,
                                                *args, **kwargs)
         if not data['stack']:
+            flavors = api.flavor.Flavor.list(self.request)
+            if not MATCHING_DEPLOYMENT_MODE:
+                # In the POC mode, only one flavor is allowed.
+                flavors = flavors[:1]
+            flavors.sort(key=lambda np: (np.vcpus, np.ram, np.disk))
+
             roles = data['roles']
             free_roles = []
             flavor_roles = {}
             for role in roles:
                 role['flavor_field'] = data['form'][role['id'] + '-flavor']
                 flavor = role['role'].flavor(data['plan'])
-                if flavor:
+                if flavor in flavors:
                     role['flavor_name'] = flavor.name
                     flavor_roles.setdefault(flavor.name, []).append(role)
                 else:
                     role['flavor_name'] = ''
                     free_roles.append(role)
             data['free_roles'] = free_roles
-
-            flavors = api.flavor.Flavor.list(self.request)
-            flavors.sort(key=lambda np: (np.vcpus, np.ram, np.disk))
             data['flavors'] = list(
                 _flavor_data(self.request, flavors, flavor_roles))
         else:
