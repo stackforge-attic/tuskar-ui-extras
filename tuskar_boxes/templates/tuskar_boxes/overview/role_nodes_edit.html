@@ -58,11 +58,7 @@
               </ul>
             </div>
         </div>
-        <div class="col-xs-7 boxes-nodes {% if flavor.nodes|length >= 100 %}boxes-nodes-small{% elif flavor.nodes|length >= 25 %}boxes-nodes-medium{% endif %}">
-            {% for node in flavor.nodes %}{% spaceless %}
-            {% include "tuskar_boxes/overview/_node_info.html" with node=node %}
-            {% endspaceless %}{% endfor %}
-        </div>
+        {% include "tuskar_boxes/overview/_node_info.html" with nodes=flavor.nodes classes="col-xs-7" %}
     </div>
 </div>
 {% endfor %}

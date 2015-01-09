@@ -1,0 +1,23 @@
+{% load i18n %}
+{% load horizon %}
+<script type="text/html" id="nodes-template">{% spaceless %}{% jstemplate %}
+[[#nodes]]
+  <div
+    class="boxes-node boxes-role-[[ role_slug ]] status-[[ state_slug ]]"
+    data-toggle="popover"
+    title="[[ node_title ]]"
+    data-content="<dl>
+      <dt>{% trans "Node UUID" %}</dt>
+      <dd>[[ uuid ]]</dd>
+      <dt>{% trans "Architecture" %}</dt>
+      <dd>[[ cpu_arch ]]</dd>
+      <dt>{% trans "CPUs" %}</dt>
+      <dd>[[ cpus ]]</dt>
+      <dt>{% trans "RAM (MB)" %}</dt>
+      <dd>[[ memory_mb ]]</dd>
+      <dt>{% trans "HDD (GB)" %}</dt>
+      <dd>[[ local_gb ]]</dd>
+    </dl>"
+  ><i class="fa fa-lg [[ state_icon ]]"></i></div>
+[[/nodes]]
+{% endjstemplate %}{% endspaceless %}</script>
