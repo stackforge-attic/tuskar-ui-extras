@@ -139,7 +139,7 @@ class IndexView(views.IndexView):
                 if 'form' in data:
                     role['flavor_field'] = data['form'][role['id'] + '-flavor']
                 flavor = role['role'].flavor(data['plan'])
-                if flavor in flavors:
+                if flavor and flavor.id in [f.id for f in flavors]:
                     role['flavor_name'] = flavor.name
                     flavor_roles.setdefault(flavor.name, []).append(role)
                 else:
