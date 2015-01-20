@@ -22,5 +22,57 @@
   <h2 id="qunit-userAgent"></h2>
   <ol id="qunit-tests"></ol>
   <div id="qunit-fixture">
+
+    <div class="boxes-available-roles"></div>
+
+    <div class="boxes-flavor" data-flavor="baremetal">
+      <div class="row">
+        <div class="col-md-9"><strong>Flavor:</strong> <i>baremetal</i> x86_64, 1 CPU, 4096MB RAM, 30GB Disk</div>
+        <div class="col-md-3"><span class="pull-right">Free Nodes:<span class="free-nodes"></span> / 4 </span></div>
+      </div>
+      <div class="row">
+        <div class="col-md-12"><div class="separator-line"></div></div>
+      </div>
+      <div class="row">
+        <div class="col-xs-5"><div class="boxes-drop-roles">
+            <div class="boxes-role-controller boxes-role" data-name="controller">
+              <div class="row">
+                <div class="col-xs-3 deploy-role-count"><input class="form-control number-picker" id="id_09c48fdc-ed80-4e9c-bc57-3c2783bf4dc0-count" min="1" name="09c48fdc-ed80-4e9c-bc57-3c2783bf4dc0-count" step="2" type="text" value="1" /><input class="boxes-flavor form-control" id="id_09c48fdc-ed80-4e9c-bc57-3c2783bf4dc0-flavor" name="09c48fdc-ed80-4e9c-bc57-3c2783bf4dc0-flavor" type="hidden" value="baremetal" /></div>
+                <div class="col-xs-6 deploy-role-label"><div class="deployment-roles-label">Controller</div></div>
+                <div class="col-xs-3 deploy-role-icon"><a name="role-edit-controller" href="/infrastructure/roles/09c48fdc-ed80-4e9c-bc57-3c2783bf4dc0/edit" class="btn"><b class="fa fa-lg fa-fw fa-pencil"></b></a></div>
+              </div>
+            </div>
+            <div class="boxes-role-swift-storage boxes-role" data-name="swift-storage" >
+              <div class="row">
+                <div class="col-xs-3 deploy-role-count"><input class="form-control number-picker" id="id_a2b6038e-d891-49f7-aeb7-a92dc38abca8-count" min="0" name="a2b6038e-d891-49f7-aeb7-a92dc38abca8-count" step="1" type="text" value="0" /><input class="boxes-flavor form-control" id="id_a2b6038e-d891-49f7-aeb7-a92dc38abca8-flavor" name="a2b6038e-d891-49f7-aeb7-a92dc38abca8-flavor" type="hidden" value="baremetal" /></div>
+                <div class="col-xs-6 deploy-role-label"><div class="deployment-roles-label">Swift-Storage</div></div>
+                <div class="col-xs-3 deploy-role-icon"><a name="role-edit-swift-storage" href="/infrastructure/roles/a2b6038e-d891-49f7-aeb7-a92dc38abca8/edit" class="btn"><b class="fa fa-lg fa-fw fa-pencil"></b></a></div>
+              </div>
+            </div>
+            <div class="boxes-role-compute boxes-role" data-name="compute" >
+              <div class="row">
+                <div class="col-xs-3 deploy-role-count"><input class="form-control number-picker" id="id_8c14fa61-8a62-4a6a-b43e-970769cf8aa2-count" min="1" name="8c14fa61-8a62-4a6a-b43e-970769cf8aa2-count" step="1" type="text" value="1" /><input class="boxes-flavor form-control" id="id_8c14fa61-8a62-4a6a-b43e-970769cf8aa2-flavor" name="8c14fa61-8a62-4a6a-b43e-970769cf8aa2-flavor" type="hidden" value="baremetal" /></div>
+                <div class="col-xs-6 deploy-role-label"><div class="deployment-roles-label">Compute</div></div>
+                <div class="col-xs-3 deploy-role-icon"><a name="role-edit-compute" href="/infrastructure/roles/8c14fa61-8a62-4a6a-b43e-970769cf8aa2/edit" class="btn"><b class="fa fa-lg fa-fw fa-pencil"></b></a></div>
+              </div>
+            </div>
+            <div class="boxes-role-cinder-storage boxes-role" data-name="cinder-storage" >
+              <div class="row">
+                <div class="col-xs-3 deploy-role-count"><input class="form-control number-picker" id="id_aa3f46c1-7f7b-4adc-8b06-bcb18254f93f-count" min="0" name="aa3f46c1-7f7b-4adc-8b06-bcb18254f93f-count" step="1" type="text" value="0" /><input class="boxes-flavor form-control" id="id_aa3f46c1-7f7b-4adc-8b06-bcb18254f93f-flavor" name="aa3f46c1-7f7b-4adc-8b06-bcb18254f93f-flavor" type="hidden" value="baremetal" /></div>
+                <div class="col-xs-6 deploy-role-label"><div class="deployment-roles-label">Cinder-Storage</div></div>
+                <div class="col-xs-3 deploy-role-icon"><a name="role-edit-cinder-storage" href="/infrastructure/roles/aa3f46c1-7f7b-4adc-8b06-bcb18254f93f/edit" class="btn"><b class="fa fa-lg fa-fw fa-pencil"></b></a></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="btn-group boxes-drop-group"></div>
+      </div>
+      <div class="boxes-nodes col-xs-7">
+        <div class="boxes-node boxes-role-" data-toggle="popover" title="Free node" data-content="<dl><dt>Node UUID</dt><dd>a085de77-b2ee-4876-9c90-e5d6cc8ade77</dd><dt>Architecture</dt><dd>x86_64</dd><dt>CPUs</dt><dd>1</dt><dt>RAM (MB)</dt><dd>4096</dd><dt>HDD (GB)</dt><dd>40</dd></dl>"><i class="fa fa-lg fa-minus"></i></div>
+        <div class="boxes-node boxes-role-" data-toggle="popover" title="Free node" data-content="<dl><dt>Node UUID</dt><dd>5470033e-1c2a-4c5c-90c7-7d96da56ba61</dd><dt>Architecture</dt><dd>x86_64</dd><dt>CPUs</dt><dd>1</dt><dt>RAM (MB)</dt><dd>4096</dd><dt>HDD (GB)</dt><dd>40</dd></dl>"><i class="fa fa-lg fa-minus"></i></div>
+        <div class="boxes-node boxes-role-compute" data-toggle="popover" title="Compute node" data-content="<dl><dt>Node UUID</dt><dd>d783b2e4-059e-4e2b-a1d1-21b3d1a7dab6</dd><dt>Architecture</dt><dd>x86_64</dd><dt>CPUs</dt><dd>1</dt><dt>RAM (MB)</dt><dd>4096</dd><dt>HDD (GB)</dt><dd>40</dd></dl>"><i class="fa fa-lg fa-check"></i></div>
+        <div class="boxes-node boxes-role-controller" data-toggle="popover" title="Controller node" data-content="<dl><dt>Node UUID</dt><dd>9262d80e-7a25-4ded-abca-3261a77dbae1</dd><dt>Architecture</dt><dd>x86_64</dd><dt>CPUs</dt><dd>1</dt><dt>RAM (MB)</dt><dd>4096</dd><dt>HDD (GB)</dt><dd>40</dd></dl>"><i class="fa fa-lg fa-check"></i></div>
+      </div>
+    </div>
   </div>
 </body></html>
