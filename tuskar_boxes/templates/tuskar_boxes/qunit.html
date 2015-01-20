@@ -9,6 +9,7 @@
 
   {% comment %}Load test modules here.{% endcomment %}
   <script type="text/javascript" src="{{ STATIC_URL }}tuskar_boxes/tests/tuskar.boxes.js"></script>
+  <script type="text/javascript" src="{{ STATIC_URL }}tuskar_boxes/tests/tuskar.boxes_progress.js"></script>
   {% comment %}End test modules.{% endcomment %}
 
   {% include "horizon/_scripts.html" %}
@@ -22,7 +23,6 @@
   <h2 id="qunit-userAgent"></h2>
   <ol id="qunit-tests"></ol>
   <div id="qunit-fixture">
-
     <div class="boxes-available-roles"></div>
 
     <div class="boxes-flavor" data-flavor="baremetal">
@@ -74,5 +74,6 @@
         <div class="boxes-node boxes-role-controller" data-toggle="popover" title="Controller node" data-content="<dl><dt>Node UUID</dt><dd>9262d80e-7a25-4ded-abca-3261a77dbae1</dd><dt>Architecture</dt><dd>x86_64</dd><dt>CPUs</dt><dd>1</dt><dt>RAM (MB)</dt><dd>4096</dd><dt>HDD (GB)</dt><dd>40</dd></dl>"><i class="fa fa-lg fa-check"></i></div>
       </div>
     </div>
+    {% include "tuskar_boxes/overview/_node_info_js.html" %}
   </div>
 </body></html>
