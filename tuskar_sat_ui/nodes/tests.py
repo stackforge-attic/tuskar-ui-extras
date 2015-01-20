@@ -12,87 +12,99 @@
 #    License for the specific language governing permissions and limitations
 #    under the License.
 
-import json
-
 from tuskar_ui.test import helpers
 
 from tuskar_sat_ui.nodes import tabs
 
 
 class SatTests(helpers.BaseAdminViewTests):
-    def test_satellite_config_direct(self):
+    def test_satellite_config(self):
         config = {
-            'Satellite': {
-                'SatelliteHost': 'http://example.com/',
-                'SatelliteAuth': 'basic:user:pass',
-                'SatelliteOrg': 'ACME',
+            tabs.SAT_CONFIG: {
+                tabs.SAT_HOST_PARAM: 'http://example.com/',
+                tabs.SAT_AUTH_PARAM: 'basic:user:pass',
+                tabs.SAT_ORG_PARAM: 'ACME',
             },
         }
-        host, auth, org = tabs._get_satellite_config(config)
-        self.assertEqual(host, 'http://example.com')
-        self.assertEqual(auth, ('user', 'pass'))
-        self.assertEqual(org, 'ACME')
 
-    def test_satellite_config_extra(self):
+        with self.settings(**config):
+            host_url, api_url, auth, org = tabs._get_satellite_config()
+            self.assertEqual(host_url, 'http://example.com')
+            self.assertEqual(api_url, 'http://example.com')
+            self.assertEqual(auth, ('user', 'pass'))
+            self.assertEqual(org, 'ACME')
+
+    def test_satellite_config_different_api_url(self):
         config = {
-            'compute-1::ExtraConfig': json.dumps({
-                'Satellite': {
-                    'SatelliteHost': 'http://example.com/',
-                    'SatelliteAuth': 'basic:user:pass',
-                    'SatelliteOrg': 'ACME',
-                }
-            }),
+            tabs.SAT_CONFIG: {
+                tabs.SAT_HOST_PARAM: 'http://example.com/',
+                tabs.SAT_API_PARAM: 'https://example.com/',
+                tabs.SAT_AUTH_PARAM: 'basic:user:pass',
+                tabs.SAT_ORG_PARAM: 'ACME',
+            },
         }
-        host, auth, org = tabs._get_satellite_config(config)
-        self.assertEqual(host, 'http://example.com')
-        self.assertEqual(auth, ('user', 'pass'))
-        self.assertEqual(org, 'ACME')
+
+        with self.settings(**config):
+            host_url, api_url, auth, org = tabs._get_satellite_config()
+            self.assertEqual(host_url, 'http://example.com')
+            self.assertEqual(api_url, 'https://example.com')
+            self.assertEqual(auth, ('user', 'pass'))
+            self.assertEqual(org, 'ACME')
 
     def test_satellite_config_missing_all(self):
         config = {}
-        with self.assertRaises(tabs.NoConfigError) as e:
-            host, auth, org = tabs._get_satellite_config(config)
-        self.assertEqual(e.exception.param, 'Satellite')
+
+        with self.settings(**config):
+            with self.assertRaises(tabs.NoConfigError) as e:
+                host_url, api_url, auth, org = tabs._get_satellite_config()
+        self.assertEqual(e.exception.param, tabs.SAT_CONFIG)
 
     def test_satellite_config_missing_one(self):
         params = {
-            'SatelliteHost': 'http://example.com/',
-            'SatelliteAuth': 'basic:user:pass',
-            'SatelliteOrg': 'ACME',
+            tabs.SAT_HOST_PARAM: 'http://example.com/',
+            tabs.SAT_AUTH_PARAM: 'basic:user:pass',
+            tabs.SAT_ORG_PARAM: 'ACME',
         }
+
         for param in [
             tabs.SAT_HOST_PARAM,
             tabs.SAT_AUTH_PARAM,
             tabs.SAT_ORG_PARAM,
         ]:
             broken_config = {
-                'Satellite': dict(kv for kv in params.items()
-                                  if kv[0] != param),
+                tabs.SAT_CONFIG: dict(kv for kv in params.items()
+                                      if kv[0] != param),
             }
-            with self.assertRaises(tabs.NoConfigError) as e:
-                host, auth, org = tabs._get_satellite_config(broken_config)
-            self.assertEqual(e.exception.param, param)
+
+            with self.settings(**broken_config):
+                with self.assertRaises(tabs.NoConfigError) as e:
+                    host_url, api_url, auth, org = tabs._get_satellite_config()
+                self.assertEqual(e.exception.param, param)
 
     def test_satellite_config_unknown_auth(self):
         config = {
-            'Satellite': {
-                'SatelliteHost': 'http://example.com/',
-                'SatelliteAuth': 'bad:user:pass',
-                'SatelliteOrg': 'ACME',
+            tabs.SAT_CONFIG: {
+                tabs.SAT_HOST_PARAM: 'http://example.com/',
+                tabs.SAT_AUTH_PARAM: 'bad:user:pass',
+                tabs.SAT_ORG_PARAM: 'ACME',
             },
         }
-        with self.assertRaises(tabs.BadAuthError) as e:
-            host, auth, org = tabs._get_satellite_config(config)
-        self.assertEqual(e.exception.auth, 'bad')
+
+        with self.settings(**config):
+            with self.assertRaises(tabs.BadAuthError) as e:
+                host_url, api_url, auth, org = tabs._get_satellite_config()
+            self.assertEqual(e.exception.auth, 'bad')
 
     def test_satellite_config_malformed_auth(self):
         config = {
-            'Satellite': {
-                'SatelliteHost': 'http://example.com/',
-                'SatelliteAuth': 'bad',
-                'SatelliteOrg': 'ACME',
+            tabs.SAT_CONFIG: {
+                tabs.SAT_HOST_PARAM: 'http://example.com/',
+                tabs.SAT_AUTH_PARAM: 'bad',
+                tabs.SAT_ORG_PARAM: 'ACME',
             },
         }
-        with self.assertRaises(tabs.BadAuthError) as e:
-            host, auth, org = tabs._get_satellite_config(config)
-        self.assertEqual(e.exception.auth, 'bad')
+
+        with self.settings(**config):
+            with self.assertRaises(tabs.BadAuthError) as e:
+                api_url, api_url_url, auth, org = tabs._get_satellite_config()
+            self.assertEqual(e.exception.auth, 'bad')

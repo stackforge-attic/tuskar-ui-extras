@@ -12,7 +12,6 @@
 #    License for the specific language governing permissions and limitations
 #    under the License.
 import collections
-import json
 import logging
 
 
@@ -28,16 +27,21 @@ from tuskar_ui.infrastructure.nodes import tabs as nodes_tabs
 from tuskar_sat_ui.nodes import tables
 
 
-SAT_HOST_PARAM = 'SatelliteHost'
-SAT_AUTH_PARAM = 'SatelliteAuth'
-SAT_ORG_PARAM = 'SatelliteOrg'
+SAT_HOST_PARAM = 'satellite_host'
+SAT_API_PARAM = 'satellite_api'
+SAT_AUTH_PARAM = 'satellite_auth'
+SAT_ORG_PARAM = 'satellite_org'
+SAT_CONFIG = 'SATELLITE_CONFIG'
+
 VERIFY_SSL = not getattr(settings, 'OPENSTACK_SSL_NO_VERIFY', False)
 LOG = logging.getLogger('tuskar_sat_ui')
 ErrataItem = collections.namedtuple('ErrataItem', [
     'title',
     'type',
     'id',
+    'host_id',
     'issued',
+    'admin_url',
 ])
 
 
@@ -69,7 +73,7 @@ class NoErrataError(Error):
     """There is no errata for that node."""
 
 
-def _get_satellite_config(parameters):
+def _get_satellite_config():
     """Find the Satellite configuration data.
 
     The configuration data is store in Heat as parameters.  They may be
@@ -77,22 +81,18 @@ def _get_satellite_config(parameters):
     in ExtraConfig.
     """
 
-    param = 'Satellite'
     try:
-        config = parameters[param]
-    except KeyError:
-        try:
-            extra = json.loads(parameters['compute-1::ExtraConfig'])
-            config = extra[param]
-        except (KeyError, ValueError, TypeError):
-            raise NoConfigError(param, 'Parameter %r missing.' % param)
+        config = getattr(settings, SAT_CONFIG)
+    except AttributeError:
+        raise NoConfigError(SAT_CONFIG, 'Parameter %r missing.' % SAT_CONFIG)
 
     for param in [SAT_HOST_PARAM, SAT_AUTH_PARAM, SAT_ORG_PARAM]:
         if param not in config:
             raise NoConfigError(param, 'Parameter %r missing.' % param)
 
-    host = config[SAT_HOST_PARAM]
-    host = host.strip('/')  # Get rid of any trailing slash in the host url
+    admin_url = config[SAT_HOST_PARAM]
+    # Get rid of any trailing slash in the admin url
+    admin_url = admin_url.strip('/')
 
     try:
         auth = config[SAT_AUTH_PARAM].split(':', 2)
@@ -105,7 +105,15 @@ def _get_satellite_config(parameters):
     else:
         raise BadAuthError(auth=auth[0])
     organization = config[SAT_ORG_PARAM]
-    return host, auth, organization
+
+    if SAT_API_PARAM in config:
+        api_url = config[SAT_API_PARAM]
+        # Get rid of any trailing slash in the API url
+        api_url = api_url.strip('/')
+    else:
+        api_url = admin_url
+
+    return admin_url, api_url, auth, organization
 
 
 def _get_stack(request):
@@ -122,7 +130,7 @@ def _get_stack(request):
     return stack
 
 
-def _find_uuid_by_mac(host, auth, organization, addresses):
+def _find_uuid_by_mac(api_url, auth, organization, addresses):
     """Pick up the UUID from the MAC address.
 
     This makes no sense, as we need both MAC address and the interface, and
@@ -131,11 +139,11 @@ def _find_uuid_by_mac(host, auth, organization, addresses):
     isn't, we need to store a mapping somewhere.
     """
 
-    url = '{host}/katello/api/v2/systems'.format(host=host)
+    url = '{api_url}/katello/api/v2/systems'.format(api_url=api_url)
     for mac in addresses:
         for interface in ['eth0', 'eth1', 'en0', 'en1']:
-            q = 'facts.net.interface.{iface}.mac_address:{mac}'.format(
-                iface=interface, mac=mac)
+            q = 'facts.net.interface.{iface}.mac_address:"{mac}"'.format(
+                iface=interface, mac=mac.upper())
             params = {'search': q, 'organization_id': organization}
             r = requests.get(url, params=params, auth=auth,
                              verify=VERIFY_SSL)
@@ -146,18 +154,18 @@ def _find_uuid_by_mac(host, auth, organization, addresses):
     raise NodeNotFound()
 
 
-def _get_errata_data(host, auth, uuid):
+def _get_errata_data(admin_url, api_url, auth, uuid):
     """Get the errata here, while it's hot."""
 
-    url = '{host}/katello/api/v2/systems/{id}/errata'.format(host=host,
-                                                             id=uuid)
+    url = '{url}/katello/api/v2/systems/{id}/errata'.format(url=api_url,
+                                                            id=uuid)
     r = requests.get(url, auth=auth, verify=VERIFY_SSL)
     r.raise_for_status()  # Raise an error if the request failed
-    errata = r.json()['contexts']
+    errata = r.json()['results']
     if not errata:
         raise NoErrataError()
-    data = [ErrataItem(x['title'], x['type'], x['id'], x['issued'])
-            for x in errata]
+    data = [ErrataItem(x['title'], x['type'], x['errata_id'], uuid,
+            x['issued'], admin_url) for x in errata]
     return data
 
 
@@ -170,13 +178,8 @@ class DetailOverviewTab(nodes_tabs.DetailOverviewTab):
         if context['node'].uuid is None:
             return context
 
-        # TODO(rdopiera) We can probably get the stack from the context.
-        stack = _get_stack(request)
-        if stack is None:
-            return context
-
         try:
-            host, auth, organization = _get_satellite_config(stack.parameters)
+            admin_url, api_url, auth, organization = _get_satellite_config()
         except NoConfigError as e:
             horizon.messages.error(request, _(
                 "No Satellite configuration found. "
@@ -192,13 +195,13 @@ class DetailOverviewTab(nodes_tabs.DetailOverviewTab):
 
         addresses = context['node'].addresses
         try:
-            uuid = _find_uuid_by_mac(host, auth, organization, addresses)
+            uuid = _find_uuid_by_mac(api_url, auth, organization, addresses)
         except NodeNotFound:
             return context
 
         # TODO(rdopiera) Should probably catch that requests exception here.
         try:
-            data = _get_errata_data(host, auth, uuid)
+            data = _get_errata_data(admin_url, api_url, auth, uuid)
         except NoErrataError:
             return context
         context['errata'] = tables.ErrataTable(request, data=data)
