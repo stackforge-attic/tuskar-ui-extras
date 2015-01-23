@@ -146,7 +146,7 @@ def _find_uuid_by_mac(host, auth, organization, addresses):
     raise NodeNotFound()
 
 
-def _get_errata_data(self, host, auth, uuid):
+def _get_errata_data(host, auth, uuid):
     """Get the errata here, while it's hot."""
 
     url = '{host}/katello/api/v2/systems/{id}/errata'.format(host=host,
@@ -198,7 +198,7 @@ class DetailOverviewTab(nodes_tabs.DetailOverviewTab):
 
         # TODO(rdopiera) Should probably catch that requests exception here.
         try:
-            data = self._get_errata_data(host, auth, uuid)
+            data = _get_errata_data(host, auth, uuid)
         except NoErrataError:
             return context
         context['errata'] = tables.ErrataTable(request, data=data)
