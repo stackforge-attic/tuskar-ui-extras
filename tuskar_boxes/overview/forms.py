@@ -57,3 +57,12 @@ class EditPlan(forms.EditPlan):
             LOG.exception(e)
             return False
         return result
+
+    def clean(self):
+        cleaned_data = super(EditPlan, self).clean()
+        # If a role has no flavor, it should have no nodes.
+        for key, value in cleaned_data.items():
+            if key.endswith('-flavor'):
+                if not value:
+                    cleaned_data[key.replace('-flavor', '-count')] = 0
+        return cleaned_data
