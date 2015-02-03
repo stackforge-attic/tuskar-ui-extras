@@ -16,7 +16,7 @@ Then add enabling files into /usr/share/openstack-dashboard/openstack_dashboard/
         'tuskar_boxes',
     ]
 
-``_60_tuskar_sat_ui.py``:
+``_60_tuskar_sat_ui.py``::
 
     PANEL = 'nodes'
     PANEL_DASHBOARD = 'infrastructure'
@@ -44,7 +44,7 @@ Install Tuskar UI Extras with all dependencies in your virtual environment::
 Enabling Tuskar-UI Boxes
 ------------------------
 
-To enable the Tuskar-UI Boxes plugin in Horizon, copy the config file:.
+To enable the Tuskar-UI Boxes plugin in Horizon, copy the config file::
 
     cp ../tuskar-ui-extras/_60_tuskar_boxes.py.example openstack_dashboard/local/enabled/_60_tuskar_boxes.py
 
@@ -52,7 +52,7 @@ To enable the Tuskar-UI Boxes plugin in Horizon, copy the config file:.
 Enabling Tuskar Satellite Integration
 -------------------------------------
 
-To enable the Tuskar-SAT6 UI plugin in Horizon, copy the config file:.
+To enable the Tuskar-SAT6 UI plugin in Horizon, copy the config file::
 
     cp ../tuskar-ui-extras/_60_tuskar_sat_ui.py.example openstack_dashboard/local/enabled/_60_tuskar_sat_ui.py
 

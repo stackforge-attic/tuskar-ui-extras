@@ -1,5 +1,5 @@
-Tuskar UI
-=========
+Tuskar UI Extras
+================
 
 Contents:
 
