@@ -113,6 +113,18 @@ tuskar.boxes = (function () {
         $count.trigger('change');
         window.setTimeout(module.update_boxes, 0);
     });
+
+    $('.deploy-role-remove').click(function () {
+        var $role = $(this).closest('.boxes-role');
+        var $count = $role.find('input.number-picker');
+        var $flavor = $role.find('input.boxes-flavor');
+        var $drop = $('.boxes-available-roles');
+        $role.appendTo($drop);
+        $flavor.val('');
+        $count.val(0);
+        $count.trigger('change');
+        window.setTimeout(module.update_boxes, 0);
+    });
   };
 
   horizon.addInitFunction(module.init);

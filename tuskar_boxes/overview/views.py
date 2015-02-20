@@ -174,3 +174,20 @@ class IndexView(views.IndexView):
         out = super(IndexView, self).get_progress_update(request, data)
         out['nodes'] = data.get('nodes', [])
         return out
+
+    def get_context_data(self, **kwargs):
+        context = super(IndexView, self).get_context_data(**kwargs)
+        context['header_actions'] = [{
+            'name': _('Edit Global Configuration'),
+            'show_name': True,
+            'url': reverse('horizon:infrastructure:overview:config'),
+            'icon': 'fa-pencil',
+            'ajax_modal': True,
+        }, {
+            'name': _('Register Nodes'),
+            'show_name': True,
+            'url': reverse('horizon:infrastructure:nodes:register'),
+            'icon': 'fa-plus',
+            'ajax_modal': True,
+        }]
+        return context

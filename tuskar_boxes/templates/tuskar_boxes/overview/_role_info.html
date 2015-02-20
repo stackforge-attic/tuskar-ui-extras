@@ -7,18 +7,23 @@
   data-name="{{ role.name|slugify }}"
 >
   <div class="row">
-    <div class="col-xs-3 deploy-role-count">
+    <div class="col-xs-5 deploy-role-count">
       {{ role.field|add_bootstrap_class }}
       {{ role.flavor_field|add_bootstrap_class }}
     </div>
-    <div class="col-xs-6 deploy-role-label">
+    <div class="col-xs-7 deploy-role-label">
       <div class="deployment-roles-label">{{ role.name|title }}</div>
     </div>
-    <div class="col-xs-3 deploy-role-icon">
+    <div class="deploy-role-icon">
       <a name="role-edit-{{role.name|slugify}}"
       href="{% url 'horizon:infrastructure:roles:update' role_id=role.id %}"
-      class="btn">
+      class="btn ajax-modal">
         <b class="fa fa-lg fa-fw fa-pencil"></b>
+      </a>
+    </div>
+    <div class="deploy-role-remove">
+      <a name="role-remove-{{role.name|slugify}}" href="#" class="btn">
+        <b class="fa fa-lg fa-fw fa-times"></b>
       </a>
     </div>
   </div>

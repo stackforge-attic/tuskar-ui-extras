@@ -38,15 +38,12 @@
     min-width: 120px;
     display: inline-block;
     padding: 4px 0 0 4px;
-    .boxes-role {
+    .boxes-role, .boxes-role:hover {
         display: inline-block;
         text-align: center;
-        width: 120px;
+        width: 180px;
         margin: 0 4px 4px 0;
-        border: 1px solid #999;
-        background: #eee;
-        color: #666;
-        .deploy-role-icon, .deploy-role-count, .form-control {
+        .deploy-role-remove, .deploy-role-count, .form-controller{
             display: none;
         }
         .deploy-role-label {
@@ -57,9 +54,14 @@
                 font-weight: normal;
             }
         }
+        .deploy-role-icon {
+            top: -8px;
+            right: -8px;
+        }
     }
 }
 .boxes-role {
+    position: relative;
     opacity: 0.75;
     padding: 6px;
     border: 1px solid;
@@ -69,6 +71,22 @@
     color: #c4a000;
     margin: 0 0 4px 0;
     cursor: move;
+    .deploy-role-icon {
+        position: absolute;
+        top: 8px;
+        right: -8px;
+        display: none;
+    }
+    .deploy-role-remove {
+        position: absolute;
+        top: -4px;
+        right: -8px;
+        display: none;
+    }
+}
+.boxes-role:hover .deploy-role-icon,
+.boxes-role:hover .deploy-role-remove {
+    display: block;
 }
 .deploy-role-status .boxes-role {
     cursor: default;
@@ -97,6 +115,7 @@
   border-color: inherit;
 }
 .boxes-role .deploy-role-icon a,
+.boxes-role .deploy-role-remove a,
 .boxes-role .number_picker,
 .boxes-role .number_picker a {
   color: inherit;
