@@ -91,6 +91,11 @@
 .deploy-role-status .boxes-role {
     cursor: default;
 }
+.boxes-role-invalid {
+    border: 1px solid #999;
+    background: #eee;
+    color: #666;
+}
 .boxes-role-controller {
     background-color: #fcaf3e;
     border-color: #f57900;

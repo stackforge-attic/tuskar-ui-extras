@@ -148,6 +148,11 @@ class IndexView(views.IndexView):
                     if field:
                         field.initial = 0
                     free_roles.append(role)
+                # For now, role is valid if it has image.
+                if role['role'].image:
+                    role['is_valid'] = True
+                else:
+                    role['is_valid'] = False
             data['free_roles'] = free_roles
             data['flavors'] = list(
                 _flavor_data(self.request, flavors, flavor_roles))

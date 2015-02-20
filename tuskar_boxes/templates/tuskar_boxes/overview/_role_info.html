@@ -3,8 +3,9 @@
 {% load url from future %}
 {% load form_helpers %}
 <div
-  class="boxes-role-{{ role.name|slugify }} boxes-role"
+  class="{% if role.is_valid %}boxes-role-{{ role.name|slugify }}{% else %}boxes-role-invalid{% endif %} boxes-role"
   data-name="{{ role.name|slugify }}"
+  {% if not role.is_valid %}title="{% trans 'Please edit this role to fill out any necessary missing configuration.' %}"{% endif %}
 >
   <div class="row">
     <div class="col-xs-5 deploy-role-count">
@@ -12,7 +13,10 @@
       {{ role.flavor_field|add_bootstrap_class }}
     </div>
     <div class="col-xs-7 deploy-role-label">
-      <div class="deployment-roles-label">{{ role.name|title }}</div>
+      <div class="deployment-roles-label">
+        {% if not role.is_valid %}<b class="fa fa-lg fa-fw fa-question"></b>{% endif %}
+        {{ role.name|title }}
+      </div>
     </div>
     <div class="deploy-role-icon">
       <a name="role-edit-{{role.name|slugify}}"
