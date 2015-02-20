@@ -13,22 +13,13 @@
 #    under the License.
 
 from django.conf import urls
-from tuskar_ui.infrastructure.nodes import views
+from tuskar_ui.infrastructure.nodes import urls as tuskar_urls
 
 from tuskar_sat_ui.nodes import views as sat_views
 
 
-urlpatterns = urls.patterns(
-    '',
-    urls.url(r'^$', views.IndexView.as_view(), name='index'),
-    urls.url(r'^register/$', views.RegisterView.as_view(),
-             name='register'),
-    urls.url(r'^auto-discover-csv/$', views.UploadView.as_view(),
-             name='auto-discover-csv'),
-    urls.url(r'^nodes_performance/$',
-             views.PerformanceView.as_view(), name='nodes_performance'),
+urlpatterns = [url for url in tuskar_urls.urlpatterns if url.name != 'detail']
+urlpatterns.extend(urls.patterns(
     urls.url(r'^(?P<node_uuid>[^/]+)/$', sat_views.DetailView.as_view(),
              name='detail'),
-    urls.url(r'^(?P<node_uuid>[^/]+)/performance/$',
-             views.PerformanceView.as_view(), name='performance'),
-)
+))
