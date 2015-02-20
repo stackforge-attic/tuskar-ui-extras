@@ -17,8 +17,9 @@ import logging
 import django.forms
 from django.utils.translation import ugettext_lazy as _
 import horizon.exceptions
+from tuskar_ui import api
 from tuskar_ui.infrastructure.overview import forms
-
+from tuskar_ui.infrastructure.parameters import forms as parameters_forms
 
 LOG = logging.getLogger(__name__)
 
@@ -66,3 +67,30 @@ class EditPlan(forms.EditPlan):
                 if not value:
                     cleaned_data[key.replace('-flavor', '-count')] = 0
         return cleaned_data
+
+
+class GlobalServiceConfig(horizon.forms.SelfHandlingForm):
+    def __init__(self, *args, **kwargs):
+        super(GlobalServiceConfig, self).__init__(*args, **kwargs)
+        self.fields.update({
+            k: v for (k, v) in
+            parameters_forms.parameter_fields(self.request).iteritems()
+            if '::' not in k
+        })
+
+    def handle(self, request, data):
+        plan = api.tuskar.Plan.get_the_plan(self.request)
+
+        try:
+            plan.patch(request, plan.uuid, data)
+        except Exception as e:
+            horizon.exceptions.handle(
+                request,
+                _("Unable to update the service configuration."))
+            LOG.exception(e)
+            return False
+        else:
+            horizon.messages.success(
+                request,
+                _("Service configuration updated."))
+            return True

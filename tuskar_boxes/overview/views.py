@@ -18,6 +18,7 @@ import operator
 from django.core.urlresolvers import reverse
 import django.utils.text
 from django.utils.translation import ugettext_lazy as _
+import horizon.forms
 from openstack_dashboard.api import base as api_base
 
 from tuskar_ui import api
@@ -191,3 +192,12 @@ class IndexView(views.IndexView):
             'ajax_modal': True,
         }]
         return context
+
+
+class GlobalServiceConfigView(horizon.forms.ModalFormView):
+    form_class = forms.GlobalServiceConfig
+    template_name = "tuskar_boxes/overview/global_service_config.html"
+    submit_label = _("Save Configuration")
+
+    def get_success_url(self):
+        return reverse('horizon:infrastructure:overview:index')

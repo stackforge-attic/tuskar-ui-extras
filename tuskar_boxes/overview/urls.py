@@ -24,7 +24,8 @@ urlpatterns = tuskar_urls.urlpatterns[1:]
 urlpatterns.extend(urls.patterns(
     '',
     urls.url(r'^$', views.IndexView.as_view(), name='index'),
-    urls.url(r'^config$', views.IndexView.as_view(), name='config'),
+    urls.url(r'^config$', views.GlobalServiceConfigView.as_view(),
+             name='config'),
 ))
 
 if settings.DEBUG:
