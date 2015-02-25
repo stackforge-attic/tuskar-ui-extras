@@ -12,57 +12,49 @@
 {% endspaceless %}{% endfor %}
 </div>
 
-<h4>{% trans "Available Flavors" %}</h4>
+<h4>{% trans "Hardware" %}</h4>
 {% for flavor in flavors %}
-<div class="boxes-flavor" data-flavor="{{ flavor.name }}">
-  <div class="row">
-    <div class="col-md-9">
-      <strong>{% trans "Flavor:" %}</strong>
-      <i>{{ flavor.name }}</i>
-      {{ flavor.cpu_arch }},
-      {{ flavor.vcpus }} CPU,
-      {{ flavor.ram }}MB RAM,
-      {{ flavor.disk }}GB Disk
-    </div>
-    <div class="col-md-3">
-      <span class="pull-right">
-        {% trans "Free Nodes:" %}
-        <span class="free-nodes"></span> / {{ flavor.nodes|length }}
-      </span>
-    </div>
+<div class="boxes-flavor panel panel-default" data-flavor="{{ flavor.name }}">
+  <div class="panel-heading">
+    <strong>{% trans "Flavor:" %}</strong>
+    <i>{{ flavor.name }}</i>
+    {{ flavor.cpu_arch }},
+    {{ flavor.vcpus }} CPU,
+    {{ flavor.ram }}MB RAM,
+    {{ flavor.disk }}GB Disk
   </div>
-  <div class="row">
-    <div class="col-md-12">
-      <div class="separator-line"></div>
-    </div>
-  </div>
-    <div class="row">
-        <div class="col-xs-5">
-            <div class="boxes-drop-roles">
-            {% for role in flavor.roles %}{% spaceless %}
-              {% include "tuskar_boxes/overview/_role_info.html" with role=role %}
-            {% endspaceless %}{% endfor %}
-            </div>
-            <div class="btn-group boxes-drop-group">
-              <div class="boxes-drop" data-toggle="dropdown">
-                  <div><i class="fa fa-plus"></i><br>
-                    {% trans "enroll a deployment role" %}</div>
-              </div>
-              <ul class="boxes-roles-menu dropdown-menu" role="menu">
-                {% for role in roles %}
-                <li>
-                  <a href="#" data-role="{{ role.name }}"
-                    >{{ role.name|title }}</a>
-                </li>
-                {% endfor %}
-              </ul>
-            </div>
+  <div class="panel-body"><div class="row">
+    <div class="col-xs-5">
+      <div class="boxes-drop-roles">
+      {% for role in flavor.roles %}{% spaceless %}
+        {% include "tuskar_boxes/overview/_role_info.html" with role=role %}
+      {% endspaceless %}{% endfor %}
+      </div>
+      <div class="btn-group boxes-drop-group">
+        <div class="boxes-drop" data-toggle="dropdown">
+            <div><i class="fa fa-plus"></i><br>
+              {% trans "enroll a deployment role" %}</div>
         </div>
-        {% include "tuskar_boxes/overview/_node_info.html" with nodes=flavor.nodes classes="col-xs-7" %}
+        <ul class="boxes-roles-menu dropdown-menu" role="menu">
+          {% for role in roles %}
+          <li>
+            <a href="#" data-role="{{ role.name }}"
+              >{{ role.name|title }}</a>
+          </li>
+          {% endfor %}
+        </ul>
+      </div>
     </div>
+    {% include "tuskar_boxes/overview/_node_info.html" with nodes=flavor.nodes classes="col-xs-7" %}
+  </div></div>
 </div>
 {% endfor %}
-
+<div class="boxes-flavor panel panel-default">
+  <div class="panel-heading"><strong>{% trans "No flavor" %}</strong></div>
+  <div class="panel-body">
+    {% include "tuskar_boxes/overview/_node_info.html" with nodes=no_flavor_nodes %}
+  </div>
+</div>
 
 <hr>
 <button type="submit" class="btn btn-default">

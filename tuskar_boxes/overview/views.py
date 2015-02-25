@@ -149,8 +149,13 @@ class IndexView(views.IndexView):
                         field.initial = 0
                     free_roles.append(role)
             data['free_roles'] = free_roles
-            data['flavors'] = list(
+            flavor_data = list(
                 _flavor_data(self.request, flavors, flavor_roles))
+            data['flavors'] = flavor_data
+            data['no_flavor_nodes'] = [
+                node for node in nodes
+                if not any(node in d['nodes'] for d in flavor_data)
+            ]
         else:
             distribution = collections.Counter()
 
