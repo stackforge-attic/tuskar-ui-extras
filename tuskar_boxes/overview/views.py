@@ -162,8 +162,11 @@ class IndexView(views.IndexView):
             for node in nodes:
                 distribution[node['role_name']] += 1
             for role in data['roles']:
-                role['distribution'] = int(float(distribution[role['name']]) /
-                                           len(nodes) * 100)
+                if nodes:
+                    role['distribution'] = int(
+                        float(distribution[role['name']]) / len(nodes) * 100)
+                else:
+                    role['distribution'] = 0
 
             if api_base.is_service_enabled(request, 'metering'):
                 for role in data['roles']:
