@@ -64,7 +64,7 @@ tuskar.boxes = (function () {
       // Only activate on a page that has the right classes.
       return;
     }
-    $('div.boxes-role').draggable({
+    $('div.boxes-role:not(.boxes-role-invalid)').draggable({
         revert: 'invalid',
         helper: 'clone',
         zIndex: 1000,
