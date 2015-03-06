@@ -17,11 +17,11 @@
 <div class="boxes-flavor panel panel-default" data-flavor="{{ flavor.name }}">
   <div class="panel-heading">
     <strong>{% trans "Flavor:" %}</strong>
-    <i>{{ flavor.name }}</i>
+    <i>{{ flavor.name }}</i>,
     {{ flavor.cpu_arch }},
-    {{ flavor.vcpus }} CPU,
-    {{ flavor.ram }}MB RAM,
-    {{ flavor.disk }}GB Disk
+    {{ flavor.vcpus }}{% trans " CPU" %},
+    {{ flavor.ram }}{% trans " MB of Memory" %},
+    {{ flavor.disk }}{% trans " GB of Disk" %}
   </div>
   <div class="panel-body"><div class="row">
     <div class="col-xs-5">
