@@ -1,7 +1,7 @@
 Production installation instructions
 ====================================
 
-First install tuskar-ui-extras::
+First install the ``tuskar-ui-extras`` package::
 
     yum install openstack-tuskar-ui-extras
 
